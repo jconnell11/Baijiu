@@ -62,7 +62,7 @@ extern "C" DEXP int ocv_cam (int unit =0);
 
 //= Returns dimensions and framerate of currently bound video source.
 
-extern "C" DEXP int ocv_info (int *iw, int *ih, double *fps =NULL);
+extern "C" DEXP int ocv_info (int& iw, int& ih, double& fps);
 
 
 //= Set geometric manipulations to perform on raw image.
@@ -94,7 +94,7 @@ extern "C" DEXP void ocv_close ();
 ///////////////////////////////////////////////////////////////////////////
 
 //= Create a display window with given title and corner position.
-// win is between 0 and 5, titles must be unique, can be moved later
+// win is between 0 and 5, titles must be unique
 // returns 1 if successful, 0 or negative for problem
 
 extern "C" DEXP int ocv_win (int win, const char *title =NULL, int cx =-1, int cy =0);
@@ -110,3 +110,10 @@ extern "C" DEXP int ocv_queue (int win, const unsigned char *buf, int iw =640, i
 //= Update all display windows with queued buffers (blocks for 1 ms).
 
 extern "C" DEXP void ocv_show ();
+
+
+//= Checks a particular window for position of most recent mouse click.
+// coords wrt to displayed buffer, y is TOP DOWN, clears status during call
+// returns 0 if nothing, 1 for left button, 3 for right button
+
+extern "C" DEXP int ocv_click (int win, int& x, int& y);

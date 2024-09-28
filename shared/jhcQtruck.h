@@ -37,7 +37,7 @@ class jhcQtruck
 // PRIVATE MEMBER VARIABLES
 private:
   // Bluetooth information exchange
-  char mb[10], data[15], cmd[15], actuators[15];
+  char data[15], cmd[15], actuators[15];
   int fresh;
 
   // primary loop control
@@ -57,8 +57,11 @@ private:
   double gc, gnow, gt, gsp;
 
 
-// PRIVATE MEMBER PARAMETERS
-private:
+// PROTECTED MEMBER PARAMETERS
+protected:
+  // Microbit ID and robot name 
+  char mb[10], name[40];
+
   // arm geometry
   double by, bs, sz, sw, boff, soff, goff;
 
@@ -74,9 +77,6 @@ private:
 
 // PROTECTED MEMBER VARIABLES
 protected:
-  // robot name 
-  char name[40];
-
   // raw robot sensor values
   double comp, tilt, roll, dist, volt;
   int line;
@@ -113,14 +113,14 @@ protected:
   void Issue ();
 
   // neck interface
-  void Gaze (double p, double t, double dps =180.0);
+  void Gaze (double p, double t, double dps =90.0);
   void CamLoc (double& x, double& y, double& z) const;
   void CamDir (double *p, double *t, double *r =NULL) const;
 
   // arm interface
-  void Home (double dps =180.0);
+  void Home (double dps =90.0);
   double Astray () const;
-  void Reach (double x, double y, double z, double ips =5.0);
+  void Reach (double x, double y, double z, double ips =6.0);
   void HandLoc (double& x, double& y, double& z) const;
   void HandDir (double *p, double *t =NULL, double *r =NULL) const;
   double HandErr (double x, double y, double z) const;

@@ -40,7 +40,7 @@ jhcQtruck::jhcQtruck ()
 {
   // unknown robot
   *mb = '\0';
-  *name = '\0';
+  strcpy_s(name, "Waldo");
 
   // initialize exchange
   *data = '\0';
@@ -591,7 +591,7 @@ void jhcQtruck::calc_speeds ()
 void jhcQtruck::Gaze (double p, double t, double dps)
 {
   bt = p - cp0;
-  st = t - ct0;
+  st = (t + 15.0) - ct0;
   asp = dps;
 }
 
@@ -618,7 +618,7 @@ void jhcQtruck::CamDir (double *p, double *t, double *r) const
   if (p != NULL)
     *p = bnow + cp0;
   if (t != NULL)
-    *t = snow + ct0;
+    *t = (snow - 15.0) + ct0;
   if (r != NULL)
     *r = cr0;
 }

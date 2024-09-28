@@ -52,7 +52,6 @@ jhcQtDrive::jhcQtDrive ()
 
 int jhcQtDrive::Setup ()
 {
-/*
   // connect to ESP32Cam 
   if (ocv_open("http://192.168.5.1:81/stream") <= 0)
   {
@@ -63,7 +62,6 @@ int jhcQtDrive::Setup ()
 
   // make a window to display video
   ocv_win(0, "Esp32 camera", 20, 50);
-*/
   return 1;
 }
 
@@ -90,14 +88,12 @@ int jhcQtDrive::Launch ()
 
 int jhcQtDrive::Respond ()
 {
-Pace();
-/*
   // wait for next video frame then display it
   if (ocv_get(buf, 1) <= 0)
     return -1;
   ocv_queue(0, buf);
   ocv_show(); 
-*/
+
   // print sensors (or Cartesian positions)
   Update();
   Show();

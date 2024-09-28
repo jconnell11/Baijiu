@@ -95,6 +95,16 @@ For integration with the [ALIA](https://github.com/jconnell11/ALIA) cognitive ar
 
 If you are interested in seeing some other small robots that use ALIA, check out [Wansui](https://github.com/jconnell11/Wansui) and [Ganbei](https://github.com/jconnell11/Ganbei).
 
+### Calibration File
+
+The programs will work somewhat better if the robot has a proper calibration file. When running pc_blulink.py you may notice the complaint: "Could not read file: config/XXXXX_calib.cfg !" Each Microbit controller has a unique 5 character ID which is reflected in the XXXXX. Once you know the ID of your board from the error message (e.g. "tagig"), rename the file ["robot_calib.cfg"](config/robot_calib.cfg) to match (e.g. "tagig_calib.cfg"). The first line inside this file is the __name__ for the robot. You can change it to whatever you want. The second line has the zero degree offsets for the 3 arm servos. The third line lists the pan, tilt, and roll offsets for the camera.
+
+To get proper values for the servo offsets, start up the pc_blulink.py sample program. Using the left and right arrow keys (while holding down __Alt__ for finer positioning), align the arm with the robot's direction of travel. Copy the first value in the status line "... servo[ -2 0 12] ..." to the first value of line 2 in the calibration file. Next, use the up and down arrow keys (with Alt) to move the grasp point between the fingertips exactly 43 mm off the floor. Copy the second value in "servo[...]" to the second value in the calibration file. Finally, use Alt with PgUp and PgDn to adjust the spacing between the fingers until they just touch. Copy the resulting third servo value into the file then save it.
+
+The calibration of the camera is accomplished through a utility that requires you to manually mouse click on certain features in the image. First, calibrate the arm servos as described above. Then start the program below and follow its instructions to update the camera offsets.
+
+    py pc_blulink.py baijiu_cal
+
 ---
 
 September 2024 - Jonathan Connell - jconnell@alum.mit.edu

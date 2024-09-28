@@ -45,6 +45,11 @@ static char name[6][40] = {"", "", "", "", "", ""};
 static int wx[6], wy[6];
 
 
+//= Mouse click information for each window.
+
+static int id[6], but[6], mx[6], my[6];
+
+
 //= Cached resampling positions and interpolation factors.
 
 unsigned long *base = NULL;
@@ -104,18 +109,15 @@ extern "C" DEXP int ocv_cam (int unit)
 
 //= Returns dimensions and framerate of currently bound video source.
 
-extern "C" DEXP int ocv_info (int *iw, int *ih, double *fps)
+extern "C" DEXP int ocv_info (int& iw, int& ih, double& fps)
 {
   cv::Size sz = img.size();
 
   if (!vcap.isOpened())
     return 0;
-  if (iw != NULL)
-    *iw = sz.width;
-  if (ih != NULL)
-    *ih = sz.height;
-  if (fps != NULL)
-    *fps = vcap.get(cv::CAP_PROP_FPS);
+  iw = sz.width;
+  ih = sz.height;
+  fps = vcap.get(cv::CAP_PROP_FPS);
   return 1;
 }
 
@@ -300,7 +302,7 @@ extern "C" DEXP void ocv_close ()
 ///////////////////////////////////////////////////////////////////////////
 
 //= Create a display window with given title and corner position.
-// win is between 0 and 5, titles must be unique, can be moved later
+// win is between 0 and 5, titles must be unique
 // returns 1 if successful, 0 or negative for problem
 
 extern "C" DEXP int ocv_win (int win, const char *title, int cx, int cy)
@@ -316,7 +318,26 @@ extern "C" DEXP int ocv_win (int win, const char *title, int cx, int cy)
   // remember desired top left corner position
   wx[win] = cx;
   wy[win] = cy;
+
+  // intitialize mouse click info
+  id[win] = win;             
+  but[win] = 0;
   return 1;
+}
+
+
+//= Capture position of mouse click to global variables.
+
+void cb_mouse (int evt, int x, int y, int flag, void *param)
+{
+  int win = *((int *) param);        
+
+  if ((evt == cv::EVENT_LBUTTONDOWN) || (evt == cv::EVENT_RBUTTONDOWN))
+  {
+    but[win] = ((evt == cv::EVENT_LBUTTONDOWN) ? 1 : 3);
+    mx[win] = x;
+    my[win] = y;
+  }
 }
 
 
@@ -343,10 +364,11 @@ extern "C" DEXP int ocv_queue (int win, const unsigned char *buf, int iw, int ih
   cv::flip(bot, top, 0);
   cv::imshow(name[win], top);
 
-  // see if window needs to be moved
+  // see if window needs to be initialized
   if ((wx[win] >= 0) && (wy[win] >= 0))
   {
     cv::moveWindow(name[win], wx[win], wy[win]);
+    cv::setMouseCallback(name[win], cb_mouse, (void *)(id + win));
     wx[win] = -1;
   }
   return 1;
@@ -358,5 +380,30 @@ extern "C" DEXP int ocv_queue (int win, const unsigned char *buf, int iw, int ih
 extern "C" DEXP void ocv_show ()
 {
   cv::waitKey(1);
+}
+
+
+//= Checks a particular window for position of most recent mouse click.
+// coords wrt to displayed buffer, y is TOP DOWN, clears status during call
+// returns 0 if nothing, 1 for left button, 3 for right button
+
+extern "C" DEXP int ocv_click (int win, int& x, int& y)
+{
+  int clk;
+
+  // sanity check
+  if ((win < 0) || (win > 5))
+    return 0;
+
+  // check if any click and reset status
+  clk = but[win];
+  if (clk <= 0)
+    return 0;
+  but[win] = 0;
+
+  // pass on requested information
+  x = mx[win];
+  y = my[win];
+  return clk;
 }
 
