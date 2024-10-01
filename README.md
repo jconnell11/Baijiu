@@ -1,7 +1,7 @@
 # Baijiu
 ## A Minimalist Mobile Manipulator
 
-This is about the cheapest (under $200) robot with an arm that you can build. It is based on a small tracked platform with a 2 DOF arm (+ gripper) and has add-on "riders" for audio and video. Remote access to the actuators and sensors is achieved through a combination of Bluetooth LE and wifi, which lets you run your main program offboard on a Windows PC. An example of simple remote keyboard control is provided, as well as a fancier speech-based system using the [ALIA](https://github.com/jconnell11/ALIA) reasoner (see [video](https://youtu.be/-0EnkERKow8)). 
+This is about the cheapest (under $200) robot with an arm that you can build. It is based on a small tracked platform with a 2 DOF arm (+ gripper) and has add-on "riders" for audio and video. Remote access to the actuators and sensors is achieved through a combination of Bluetooth LE and wifi, which lets you run your main program offboard on a Windows PC. An example of simple remote keyboard control is provided, as well as a fancier speech-based system using the [ALIA](https://github.com/jconnell11/ALIA) reasoner (see [__video__](https://youtu.be/-0EnkERKow8)). For more examples of robot teaching check out [this](https://arxiv.org/abs/1911.09782) and [this](https://arxiv.org/abs/1911.11620).
 
 [![Waldo robot](Waldo.jpg)](https://youtu.be/-0EnkERKow8)
 
@@ -23,7 +23,9 @@ Start by replacing the camera/lens assembly on the ESP32 board set. Pop the latc
 
 Now comes the hardest part, modifying the cable to the camera. Although the Qtruck base does provide 5 volts, this is mostly for the arm servos. Any time the robot grabs something, the hand servo will stall out and wreck the 5V supply for about 3 seconds. Therefore, the tiny boost converter board needs to be wired into the power connection. 
 
-Start by cutting the black 4 pin cable that comes with the camera about 3" from one end. Plug the longer section into the back board of the camera, which clearly labels the "5V" and "GND" wires. Strip and tin the ends of these two, then solder them into the holes on the converter board labelled "VOUT" and "GND". Similarly, plug the shorter section into Port 3 of the backboard on the Qtruck (front right corner). If you look under this board, you will see that the front two pins are labelled "5V" and "GND". Again, strip and tin the ends of these two wires, then solder them to the "VIN" and "GND" connections on the converter board. Finally, enclose the whole assembly in a length of heatshrink tubing to insulate it (or just wrap it in electrical tape).
+![power cable](cable_marked.jpg)
+
+Start by cutting the black 4 pin cable that comes with the camera about 3" from one end. Plug the shorter section into Port 3 of the backboard on the Qtruck (front right corner). If you look under this board, you will see that the front two pins are labelled "5V" and "GND". Strip and tin the ends of the corresponding two wires, then solder them into the holes on the U1V10F5 converter board labelled "VIN" and "GND". Similarly, plug the longer cable section into the back board of the camera, which clearly labels the "5V" and "GND" wires. Again, strip and tin the ends of these, then solder them to the "VOUT" and "GND" connections on the converter. Finally, slide a length of heatshrink tubing over the whole board assembly to insulate it (or just wrap it in electrical tape).
 
 To test the setup, power-on the robot and check that the red light on the camera comes on. Next, insert the USB wifi adapter into your laptop and have it connect to SSID "HW_ESP32" (no password needed). At this point you should be able to see live images from the camera by using a browser to view http://192.168.5.1. The image is likely to be upside down, but you can fix this by turning on, then turning off, the "V Flip" switch on the screen. Note that, for better range, you can instead use your main wifi adapter to connect to the camera.
 
