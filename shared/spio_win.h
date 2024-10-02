@@ -79,6 +79,11 @@ extern "C" DEXP int reco_status ();
 extern "C" DEXP const char *reco_heard ();
 
 
+//= Gives approximate time (ms) that utterance started before notification.
+
+extern "C" DEXP int reco_delay ();
+
+
 //= Start speaking some message, overriding any current one (never blocks).
 // returns 1 if successful, 0 or negative for some error
 

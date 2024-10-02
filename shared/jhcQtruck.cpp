@@ -629,11 +629,12 @@ void jhcQtruck::CamDir (double *p, double *t, double *r) const
 ///////////////////////////////////////////////////////////////////////////
 
 //= Move hand to default high forward facing location.
+// default home XYZ position = (0.0 6.8 2.7)
 
 void jhcQtruck::Home (double dps)
 {
-  bt =  90.0;
-  st = 100.0;
+  bt =  0.0;
+  st = 25.0;
   asp = dps;
 }
  
@@ -642,7 +643,7 @@ void jhcQtruck::Home (double dps)
 
 double jhcQtruck::Astray () const
 {
-  return __max(fabs(bnow - 90.0), fabs(snow - 100.0));
+  return __max(fabs(bnow), fabs(snow - 25.0));
 }
 
 
@@ -667,6 +668,7 @@ void jhcQtruck::Reach (double x, double y, double z, double ips)
 
 //= Tell current location of fingertips wrt center of robot body.
 // y points forward, x is to right, z up from floor, coordinates in inches
+// default home XYZ position = (0.0 6.8 2.7)
 
 void jhcQtruck::HandLoc (double& x, double& y, double& z) const
 {
@@ -713,6 +715,7 @@ double jhcQtruck::HandErr (double x, double y, double z) const
 
 //= Change fingertip separation to the given width in inches.
 // hand servo may stall out before goal if gripping an object
+// maximum width = 3.5" (really 4)
 
 void jhcQtruck::Grip (double w, double ips)
 {

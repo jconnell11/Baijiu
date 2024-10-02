@@ -133,7 +133,7 @@ void jhcBaijiuAct::set_commands ()
 void jhcBaijiuAct::reco_update ()
 {
   if ((alia_hear = reco_status()) == 2)
-    alia_spin(reco_heard());
+    alia_spin(reco_heard(), reco_delay());
 }
 
 

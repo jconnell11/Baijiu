@@ -73,7 +73,8 @@ extern "C"
   DEXP const char *alia_spout ();
 
   //= Text input to reasoner from speech recognition (prevents overrun).
-  DEXP void alia_spin (const char *reco);
+  // optionally records delay (ms) from start of speech to recognition 
+  DEXP void alia_spin (const char *reco, int ms =0);
 
   DEXP int alia_attn;                        // paying attention (no wake)
 

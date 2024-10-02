@@ -90,6 +90,11 @@ static int reco = 0;
 static char heard[500];
 
 
+//= Result duration plus endpoint silence (ms);
+
+static int delay = 0;
+
+
 //= Run-on utterance chunking variables.
 
 static char blob[500] = "";
@@ -201,6 +206,7 @@ extern "C" DEXP int spio_start (const char *path, int prog)
   if ((cfg = SpeechConfig::FromSubscription(key, reg)) == NULL)
     return -1;                                                 // invalid credentials
   cfg->SetProfanity(ProfanityOption::Raw);
+  cfg->SetProperty(PropertyId::Speech_SegmentationSilenceTimeoutMs, "500");
   if ((svc = SpeechRecognizer::FromConfig(cfg)) == NULL)
     return 0;                                                  // no internet?
 
@@ -236,6 +242,7 @@ extern "C" DEXP int spio_start (const char *path, int prog)
       const char *res = (e.Result->Text).data(); 
       if ((*res != '\0') && (strcmp(res, "Hey, Cortana.") != 0))      // quirk
       {
+        delay = (int)(0.0001 * e.Result->Duration()) + 500;
         strcpy_s(blob, res); 
         read = blob;
         reco = 2;
@@ -302,6 +309,14 @@ extern "C" DEXP const char *reco_heard ()
   return heard;
 }
  
+
+//= Gives approximate time (ms) that utterance started before notification.
+
+extern "C" DEXP int reco_delay ()
+{
+  return delay;
+}
+
 
 //= Start speaking some message, overriding any current one (never blocks).
 // returns 1 if successful, 0 or negative for some error
