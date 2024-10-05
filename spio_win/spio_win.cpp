@@ -242,7 +242,7 @@ extern "C" DEXP int spio_start (const char *path, int prog)
       const char *res = (e.Result->Text).data(); 
       if ((*res != '\0') && (strcmp(res, "Hey, Cortana.") != 0))      // quirk
       {
-        delay = (int)(0.0001 * e.Result->Duration()) + 500;
+        delay = (int)(0.0001 * e.Result->Duration());
         strcpy_s(blob, res); 
         read = blob;
         reco = 2;
