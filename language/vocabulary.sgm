@@ -5,6 +5,7 @@
 
 =[ATTN]
   robot
+  bucket of bolts
 
 
 // proper nouns
@@ -16,6 +17,7 @@
   Ken
   Vassar
   Gwen
+  Deb
   IBM
   Scar
   Simba
@@ -27,8 +29,9 @@
 // singular nouns
 
 =[AKO]
-  tiger
+  thing
   object
+  tiger
   bottle
   box
   color
@@ -122,7 +125,6 @@
   ask about
   snarf
   advance
-  run away
 
 
 // imperative verbs requiring object and location or direction
@@ -133,6 +135,7 @@
 // adverbial modifiers
 
 =[MOD]
+
 
 
 // ================================================
