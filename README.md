@@ -3,35 +3,56 @@
 
 This is about the cheapest (under $200) robot with an arm that you can build. It is based on a small tracked platform with a 2 DOF arm (+ gripper) and has add-on "riders" for audio and video. Remote access to the actuators and sensors is achieved through a combination of Bluetooth LE and wifi, which lets you run your main program offboard on a Windows PC. An example of simple remote keyboard control is provided, as well as a fancier speech-based system using the [ALIA](https://github.com/jconnell11/ALIA) reasoner (see [__video__](https://youtu.be/-0EnkERKow8)). For more examples of robot teaching check out [this](https://arxiv.org/abs/1911.09782) and [this](https://arxiv.org/abs/1911.11620).
 
-[![Waldo robot](Waldo.jpg)](https://youtu.be/-0EnkERKow8)
+[![Waldo robot](doc/Waldo.jpg)](https://youtu.be/-0EnkERKow8)
 
 ### Parts List
 
-To build this robot you will need the Hiwonder [Qtruck](https://www.hiwonder.com/collections/micro-bit-robotics/products/qtruck-programmable-educational-robot?variant=18245492637747) base ($144 incl. Microbit and shipping), Hiwonder [ESP32Cam](https://www.hiwonder.com/products/esp32-cam-ai-vision-module) ($13), a 5V boost [converter](https://www.pololu.com/product/2564) ($6), a 160 degree OV2640 [lens](https://www.amazon.com/dp/B0B5XGMTSZ) ($9), a [USB wifi](https://www.amazon.com/dp/B08F2ZNC6J) adapter ($9), and a 2-way Bluetooth [mini-speaker](https://www.amazon.com/dp/B0BPNYY61M) ($14). You might consider getting a higher capacity [battery](https://www.18650batterystore.com/products/samsung-35e-button-top) as well ($4), although the Qtruck does come with one. A small amount of soldering and gluing is required to complete the robot, as described below.
+| description | source | cost |
+| :---------- | -----: | ---: | 
+| Qtruck robot with micro:bit V2.0 | [Amazon](https://www.amazon.com/Qtruck-Smart-Robot-Car-Micro/dp/B0DHXVB41Q) | 110 |
+| ESP32-CAM wifi camera development board | [Amazon](https://www.amazon.com/Development-ESP32-CAM-Type-C-Bluetooth-Antennas/dp/B0FQP9Y114) | 14 |
+| 5V boost converter U1V10F5 | [Pololu](https://www.pololu.com/product/2564) | 7 |
+| 140 degree OV2640 camera module | [Amazon](https://www.amazon.com/Treedix-OV2640-Camera-Module-Degree/dp/B0894KKXHX) | 10 |
+| USB wifi adapter | [Amazon](https://www.amazon.com/dp/B08F2ZNC6J) | 10 |
+| 2-way Bluetoofh mini-speaker | [Amazon](https://www.amazon.com/dp/B0BPNYY61M) | 14 |
+| 3500 mah 18650 battery (optional) | [Battery Store](https://www.18650batterystore.com/products/samsung-35e-button-top) | 8 |
+|  | __TOTAL__ | __$ 172__ |
 
-### Body Assembly
+Notes:
+* The Qtruck comes with a battery, but the optional replacement lasts about 3x longer. 
+* A small amount of soldering and gluing is required to complete the robot, as described below.
+
+### Speaker Installation
 
 Begin by assembling the Qtruck in the default "transfer" model. Once done, flip the robot over and affix the mini-speaker to the underside using two strips of Gorilla double-sided tape: one on the chassis and one on the battery. The speaker should be mounted with its grill upwards (button downward) and its USB charging port toward the rear of the vehicle. 
 
-![speaker attachment](speaker_marked.jpg)
+![speaker attachment](doc/speaker_marked.jpg)
 
-Press the button underneath the mini-speaker until the blue light comes on __solid__ then pair the speaker/mic ("BTS0011") with your laptop. Configure "Sound Settings" and choose this device as both the output and input device. You may also need to go into Control Panel, select Speech Recognition, click on "Text to Speech" (on left), hit the "Advanced ..." button, then tell it to "Use this audio output device" making sure the BTS0011 _AG_ version is selected.
+Press the button underneath the mini-speaker until the blue light comes on __solid__ then pair the speaker/mic ("BTS0011") with your laptop. After this, adjust the audio settings by double clicking the [speech.bat](speech.bat) file or running the command below:
+
+    control %windir%\system32\Speech\SpeechUX\sapi.cpl)
+* Voice selection = Microsoft David
+* Audio Output ...
+    * Playback tab = Headphones (Set Default)
+    * Recording tab = Headset (Set Default)
+    * Communications tab = Do nothing
+* Advanced ... = Use preferred audio output device
 
 ### Camera Installation
 
-Start by replacing the camera/lens assembly on the ESP32 board set. Pop the latch on the connector to release the flat cable, then carefully pry under the camera with an X-acto knife to dislodge it from the board. After this, insert the wide-angle module's cable into the connector and re-latch it. If the camera flops around, you can use thin double-sided Scotch tape to secure its backside to the chip.
+Start by __replacing__ the camera/lens assembly on the ESP32 board set. Pop the latch on the connector to release the flat cable, then carefully pry under the camera with an X-acto knife to dislodge it from the board. After this, insert the wide-angle module's cable into the connector and re-latch it. If the camera flops around, you can use thin double-sided Scotch tape to secure its backside to the chip.
 
-Now comes the hardest part, modifying the cable to the camera. Although the Qtruck base does provide 5 volts, this is mostly for the arm servos. Any time the robot grabs something, the hand servo will stall out and wreck the 5V supply for about 3 seconds. Therefore, the tiny boost converter board needs to be wired into the power connection. 
+Now comes the hardest part, modifying the __cable__ to the camera. Although the Qtruck base does provide 5 volts, this is mostly for the arm servos. Any time the robot grabs something, the hand servo will stall out and wreck the 5V supply for about 3 seconds. Therefore, the tiny boost converter board needs to be wired into the power connection. 
 
-![power cable](cable_marked.jpg)
+![power cable](doc/cable_marked.jpg)
 
 Start by cutting the black 4 pin cable that comes with the camera about 3" from one end. Plug the shorter section into Port 3 of the backboard on the Qtruck (front right corner). If you look under this board, you will see that the front two pins are labelled "5V" and "GND". Strip and tin the ends of the corresponding two wires, then solder them into the holes on the U1V10F5 converter board labelled "VIN" and "GND". Similarly, plug the longer cable section into the back board of the camera, which clearly labels the "5V" and "GND" wires. Again, strip and tin the ends of these, then solder them to the "VOUT" and "GND" connections on the converter. Finally, slide a length of heatshrink tubing over the whole board assembly to insulate it (or just wrap it in electrical tape).
 
 To test the setup, power-on the robot and check that the red light on the camera comes on. Next, insert the USB wifi adapter into your laptop and have it connect to SSID "HW_ESP32" (no password needed). At this point you should be able to see live images from the camera by using a browser to view http://192.168.5.1. The image is likely to be upside down, but you can fix this by turning on, then turning off, the "V Flip" switch on the screen. Note that, for better range, you can instead use your main wifi adapter to connect to the camera.
 
-![camera attachment](camera_marked.jpg)
+![camera attachment](doc/camera_marked.jpg)
 
-The last task is to mount the camera board on the robot with a big glob of hot melt glue. Prop up the plate under the gripper 50 mm so that the middle section of the arm is roughly flat. Turn the robot on and point your browser to the camera's [URL](http://192.168.5.1). Now spread a thick line of hot melt glue on the back of the middle arm platform, and poke the bottom of the ESP32Cam board into it. The glue should mostly contact the front board and the 4 pin cable should hang off the backside. Tilt the camera slightly so all 4 top screws of the gripper servo are just in view, then hold the boards in this orientation until the glue cools and firms up.
+The last task is to mount the camera board on the robot with a big glob of __hot melt glue__. Prop up the plate under the gripper 50 mm so that the middle section of the arm is roughly flat. Turn the robot on and point your browser to the camera's [URL](http://192.168.5.1). Now spread a thick line of hot melt glue on the back of the middle arm platform, and poke the bottom of the ESP32Cam board into it. The glue should mostly contact the front board and the 4 pin cable should hang off the backside. Tilt the camera slightly so all 4 top screws of the gripper servo are just in view, then hold the boards in this orientation until the glue cools and firms up.
 
 ### Software Configuration
 
@@ -41,19 +62,20 @@ Start by copying this whole GitHub directory somewhere on your machine (e.g. "Ba
 
 The Qtruck robot also needs to have software installed that establishes a Bluetooth link with the laptop. To do this, connect the robot to your computer using the mini-USB at the rear of the small Microbit board on top. You should see a drive window pop up with just a few files in it. Drag and drop __qt_blulink.hex__ onto this window to start the programming process. When it is finished, the drive window should re-appear (but there will be no trace of the hex file). 
 
-On the first run, the robot will calibrate its onboard magnetic compass. As suggested by the scrolling message, rotate the robot through all 3 axes until the 25 lights on the back are all on. After this you should see a big red "X" which means the robot is waiting for a connection. You only have to do the calibration once but, if you want to force it to run again, hold down the "B" button while powering-on to enter this mode.
+On the first run, the robot will calibrate its onboard magnetic compass. As suggested by the __scrolling message__, rotate the robot through all 3 axes until the 25 lights on the back are all on. After this you should see a big red "X" which means the robot is waiting for a connection. You only have to do the calibration once but, if you want to force it to run again, hold down the left "B" button while powering-on to enter this mode.
 
 ### Sample Applications
 
-At this point you should be able to try out the simple remote-control program. This will pop-up a window with a de-warped version of the camera and allow you to move the robot around using the numberpad, arrow keys, etc. To activate this, turn on the robot and the speaker/mic pod, and make sure that the wifi network "HW_ESP32" is found. Then open a command prompt, "cd" to the installation directory (e.g. "Baijiu"), and enter:
+At this point you should be able to try out the simple remote-control program. This will pop-up a window with a de-warped version of the camera and allow you to move the robot around using the numberpad, arrow keys, etc. To activate this, turn on the robot and the speaker/mic pod, make sure that the wifi network "HW_ESP32" is found, then double click [__drive.bat__](drive.bat).
+Alternatively, open a command prompt, switch the installation directory (e.g. "cd Baijiu"), and enter:
 
     py pc_blulink.py
 
 To run the more advanced ALIA reasoner it helps (but is not necessary) to set up a Microsoft [__Azure__](https://portal.azure.com/#create/Microsoft.CognitiveServicesSpeechServices) account (essentially free for low usage). From your Azure home page select "Speech Services" then "+ Create" then click on "Manage keys". Modify local text file [spio_win.key](config/spio_win.key) with valid "Key" and "Location" strings to make the example work. To select the voice the robot responds with, open Control Panel, click Speech Recognition, then click on "Text to Speech" (on left) to see your choices.
 
-With or without speech, the ALIA sample will allow you to ask the robot "What is your name?" and command things like "Drive forward". You can also teach it things like "My name is Dan" or "To refuse, move the hand to the left then move it to the right". If rear corner lights are not green, you will need to get its attention by starting your sentence with "robot" or "Waldo". To run this program simply click on the [demo.bat](demo.bat) file, or alternatively enter:
+With or without speech, the ALIA sample will allow you to ask the robot "What is your name?" and command things like "Drive forward". You can also teach it things like "My name is Dan" or "To refuse, move the hand to the left then move it to the right". If rear corner lights are not green, you will need to get its attention by starting your sentence with "robot" or "Waldo". To run this program simply doule click on the [__demo.bat__](demo.bat) file in the installation directory, or alternatively enter the command:
 
-    py pc_blulink.py baijiu_act
+    py pc_blulink.py baijiu_vis
 
 ### Python Coding
 
@@ -93,22 +115,22 @@ Images from the robot's camera can be obtained using the [__vid_ocv__](shared/vi
 Speech interactions are mediated via the added mini-speaker/mic pod and the [__spio_win__](shared/spio_win.h) DLL. This hides some of the complexity of the online Azure speech recognition system and local Text-to-Speech generation. The primary calls are reco_status(), reco_heard(), and tts_say(). 
 While speech output is native to Windows, you need to configure Azure credentials for speech input (as noted in the [Sample Applications](#sample-applications) section).
 
-For integration with the [ALIA](https://github.com/jconnell11/ALIA) cognitive architecture, see the [baijiu_act](baijiu_act) example. The actual interface to the reasoner is primarily mediated by a bunch of shared variables in the [__alia_act__](baijiu_act/alia_act.h) DLL. For instance, the current heading of the robot is communicated through the variable "alia_bh", and the speed of the robot is commanded through "alia_bmv" (relative to a canonical speed). Note that there are many variables in alia_act that are not used by Qtruck since the DLL was designed to be used with a variety of different (and more sophisticated) robots. 
+For integration with the [ALIA](https://github.com/jconnell11/ALIA) cognitive architecture, see the [baijiu_vis](baijiu_vis) example. The actual interface to the reasoner is primarily mediated by a bunch of shared variables in the [__alia_vis__](baijiu_vis/alia_vis.h) DLL. For instance, the current heading of the robot is communicated through the variable "alia_bh", and the speed of the robot is commanded through "alia_bmv" (relative to a canonical speed). Note that there are many variables in alia_vis that are not used by Qtruck since the DLL was designed to be used with a variety of different (and more sophisticated) robots. 
 
 If you are interested in seeing some other small robots that use ALIA, check out [Wansui](https://github.com/jconnell11/Wansui) and [Ganbei](https://github.com/jconnell11/Ganbei).
 
 ### Calibration File
 
-The programs will work somewhat better if the robot has a proper calibration file. When running pc_blulink.py you may notice the complaint: "Could not read file: config/XXXXX_calib.cfg !" Each Microbit controller has a unique 5 character ID which is reflected in the XXXXX. Once you know the ID of your board from the error message (e.g. "tagig"), rename the file ["robot_calib.cfg"](config/robot_calib.cfg) to match (e.g. "tagig_calib.cfg"). The first line inside this file is the __name__ for the robot. You can change it to whatever you want. The second line has the zero degree offsets for the 3 arm servos. The third line lists the pan, tilt, and roll offsets for the camera.
+The programs will work somewhat better if the robot has a proper calibration file. When running pc_blulink.py you may notice the complaint: "Could not read file: config/XXXXX_calib.cfg !" Each Microbit controller has a unique 5 character ID which is reflected in the XXXXX. Once you know the ID of your board from the error message (e.g. "tagig"), rename the file ["robot_calib.cfg"](config/robot_calib.cfg) to match (e.g. "tagig_calib.cfg"). The first line inside this file is the __robot's name__. You can change it to whatever you want. The second line has the zero degree offsets for the 3 arm servos. The third line lists the pan, tilt, and roll offsets for the camera.
 
-To get proper values for the servo offsets, start up the pc_blulink.py sample program. Using the left and right arrow keys (while holding down __Alt__ for finer positioning), align the arm with the robot's direction of travel. Copy the first value in the status line "... servo[ -2 0 12] ..." to the first value of line 2 in the calibration file. Next, use the up and down arrow keys (with Alt) to move the grasp point between the fingertips exactly 43 mm off the floor. Copy the second value in "servo[...]" to the second value in the calibration file. Finally, use Alt with PgUp and PgDn to adjust the spacing between the fingers until they just touch. Copy the resulting third servo value into the file then save it.
+To get proper values for the __servo offsets__, start up the pc_blulink.py sample program. Using the left and right arrow keys (while holding down "Alt" for finer positioning), align the arm with the robot's direction of travel. Copy the first value in the status line "... servo[ -2 0 12] ..." to the first value of line 2 in the calibration file. Next, use the up and down arrow keys (with Alt) to move the grasp point between the fingertips exactly 43 mm off the floor. Copy the second value in "servo[...]" to the second value in the calibration file. Finally, use Alt with PgUp and PgDn to adjust the spacing between the fingers until they just touch. Copy the resulting third servo value into the file then save it.
 
-The calibration of the camera is accomplished through a utility that requires you to manually mouse click on certain features in the image. First, calibrate the arm servos as described above. Then start the program below and follow its instructions to update the camera offsets.
+The calibration of the __camera__ is accomplished through a utility that requires you to manually mouse click on certain features in the image. First, calibrate the arm servos as described above. Then start the program below and follow its instructions to update the camera offsets.
 
     py pc_blulink.py baijiu_cal
 
 ---
 
-September 2024 - Jonathan Connell - jconnell@alum.mit.edu
+May 2026 - Jonathan Connell - jconnell@alum.mit.edu
 
 

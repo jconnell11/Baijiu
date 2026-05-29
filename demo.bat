@@ -1,3 +1,3 @@
 @echo off
-py pc_blulink.py beijiu_act
+py pc_blulink.py baijiu_vis
 pause
