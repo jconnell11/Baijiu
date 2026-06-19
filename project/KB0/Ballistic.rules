@@ -1,0 +1,27 @@
+// Category definitions and rules for Ballistic kernel
+// ========================================================
+
+RULE 1 - "You always have your hand"
+    if: self-1 -lex-  me
+  then:  fcn-3 -lex-  have
+               -fcn-> act-4
+         act-4 -agt-> self-1
+               -obj-> obj-5
+        kind-6 -lex-  hand
+               -ako-> obj-5
+         wrt-7 -lex-  of
+               -wrt-> kind-6
+               -ref-> self-1 
+
+
+RULE 2 - "You always have your arm"
+    if: self-1 -lex-  me
+  then:  fcn-3 -lex-  have
+               -fcn-> act-4
+         act-4 -agt-> self-1
+               -obj-> obj-5
+        kind-6 -lex-  arm
+               -ako-> obj-5
+         wrt-7 -lex-  of
+               -wrt-> kind-6
+               -ref-> self-1 
