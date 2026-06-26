@@ -33,7 +33,9 @@ Finally, click the circled right-arrow button near the top ("Upload"). The "Outp
 
     Camera Ready! Use 'http://192.168.0.240' to connect
 
-Entering this into your browser will bring up a page with a bunch of controls, none of which need to be adjusted. However, you do need to record the camera IP in the __calibration file__ [tagig_calib.cfg](../project/config/tagig_calib.cfg) (or whatever the ID for your micro:bit board is).
+Entering this into your browser will bring up a page with a bunch of controls, none of which need to be adjusted. However, you do need to record the camera IP in the __calibration file__ [tagig_calib.cfg](../project/config/tagig_calib.cfg) (or whatever the ID for your micro:bit board is). 
+
+Be aware that this address can change! If you __cannot connect__ to the camera, either re-plug the USB cable to get the new address, or check the local router (usually 192.168.0.1 or 192.168.1.1) for a device mentioning "ESP". Record the new number in the calibration file. 
 
 ### Power Cable
 
