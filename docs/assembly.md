@@ -4,7 +4,7 @@ This will likely take several hours, largely devoted to assembling the physical 
 
 ### Hiwonder Qtruck
 
-Start by assembling the Qtruck robot, following the instructions for the default "transfer" model. For long-term stability, add a __lockwasher__ to the central screw of the arm swivel servo. Also, skip the black __spiral wrap__ around the servo wires since this can block the camera.
+Start by assembling the Qtruck robot, following the instructions for the default "transfer" model. For long-term stability, add a __lockwasher__ to the central screw of the arm swivel servo. Also, skip the black __spiral wrap__ around the servo wires since this can block the camera. Finally, to help the vision system with white floors, use a black Sharpie to __outline__ the heart-shaped plate holding the gripper servo.
 
 ### Software Environment
 
