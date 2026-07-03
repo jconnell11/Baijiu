@@ -15,7 +15,7 @@ Note that a small amount of __soldering__ and __gluing__ is required to complete
 4. [Speech Components](speech.md)
 5. [Samples and Coding](coding.md)
 
-For the fanciest demo double click the [__show.bat__](../project/show.bat) file. With or without speech, the ALIA sample will allow you to ask the robot "What is your name?" and command things like "Drive forward". You can also teach it things like "My name is Dan" or "To refuse, move the hand to the left then move it to the right". If rear corner lights are not green, you will need to get the robot's attention by starting your sentence with "robot" or "Waldo". To suppress the display of images double click [demo.bat](../project/demo.bat) instead.
+For the fanciest demo double click the [__demo.bat__](../project/demo.bat) file. With or without speech, the ALIA sample will allow you to ask the robot "What is your name?" and command things like "Drive forward". You can also teach it things like "My name is Dan" or "To refuse, move the hand to the left then move it to the right". If rear corner lights are not green, you will need to get the robot's attention by starting your sentence with "robot" or "Waldo". 
 
 For more examples of robot teaching check out [this](https://arxiv.org/abs/1911.09782) and [this](https://arxiv.org/abs/1911.11620). To see some other small robots that use ALIA, check out [Wansui](https://github.com/jconnell11/Wansui) and [Ganbei](https://github.com/jconnell11/Ganbei).
 

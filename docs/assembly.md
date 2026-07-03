@@ -4,7 +4,11 @@ This will likely take several hours, largely devoted to assembling the physical 
 
 ### Hiwonder Qtruck
 
-Start by assembling the Qtruck robot, following the instructions for the default "transfer" model. For long-term stability, add a __lockwasher__ to the central screw of the arm swivel servo. Also, skip the black __spiral wrap__ around the servo wires since this can block the camera. Finally, to help the vision system with white floors, use a black Sharpie to __outline__ the heart-shaped plate holding the gripper servo.
+Start by assembling the Qtruck robot, following the instructions for the default "transfer" model. For long-term stability, add a __lockwasher__ to the central screw of the arm swivel servo. 
+
+![gripper detail](gripper_marked.jpg)
+
+To help the vision system with white floors, use a black Sharpie to __outline__ the heart-shaped plate holding the gripper servo. Also, skip the black __spiral wrap__ around the servo wires since this can block the camera view.
 
 ### Software Environment
 
@@ -22,11 +26,9 @@ You can test out the basic Bluetooth functionality by invoking the command above
 
 ### Configuration File
 
-The main programs will work somewhat better if the robot has a proper configuration file. Otherwise you may notice the complaint: "Could not read file: config/xxxxx_calib.cfg !" Each Microbit controller has a unique 5 character ID which is reflected in the xxxxx. Once you know the ID of your board (e.g. from running pc_drive, above), rename the file [robot_calib.cfg](../project/config/robot_calib.cfg) to match (e.g. "tagig_calib.cfg"). The first line inside this file is the __robot's name__. You can change it to whatever you want. The second line is the streaming camera's URL (set later). The third line has the zero degree offsets for the 3 arm servos. The fourth line lists the pan, tilt, and roll offsets for the camera (also set later). 
+The main programs will work somewhat better if the robot has a proper configuration file. Otherwise you may notice the complaint: "Could not read file: config/xxxxx_calib.cfg !" Each Microbit controller has a unique 5 character ID which is reflected in the xxxxx. Once you know the ID of your board (e.g. from running pc_drive, above), rename the file [robot_calib.cfg](../project/config/robot_calib.cfg) to match (e.g. "tagig_calib.cfg"). The first line inside this file is the __robot's name__. You can change it to whatever you want. The second line is the streaming camera's URL (see [Camera Installation](camera.md)). The third line has the zero degree offsets for the 3 arm servos. The fourth line lists the pan, tilt, and roll offsets for the camera (also set later). 
 
-    py pc_blulink.py
-
-To get proper values for the __servo offsets__, start up the [baijiu_test](../project/baijiu_test/baijiu_test.cpp) sample program via the command above. Using the left and right arrow keys (while holding down "Alt" for finer positioning), align the arm with the robot's direction of travel. Copy the first value in the status line "... servo[ -2 0 12] ..." to the first value of line 3 in the calibration file. Next, use the up and down arrow keys (with Alt) to move the grasp point between the fingertips exactly 43 mm off the floor. Copy the second value in "servo[...]" to the second value in the calibration file. Finally, use Alt with PgUp and PgDn to adjust the spacing between the fingers until they just touch. Copy the resulting third servo value into the configuration file then save it.
+To get proper values for the __servo offsets__, start by double clicking on the [view.bat](../project/view.bat) file. Using the PgUp and PgDn keys (while holding down "Alt" for finer positioning) adjust the spacing between the fingers until they just touch. Next, use the up and down arrow keys (with Alt) to move the grasp point between the fingertips exactly 43 mm off the floor. Finally, use the left and right arrow keys (with Alt) to align the grasp point with the robot's direction of travel. Once these steps have been accomplished, add the three numbers in the status line "... servo[ -2 0 12] ..." to the values in the second line of the configuration file.
 
 ---
 

@@ -94,7 +94,7 @@ else:
   try:
     with KaspersMicrobit.find_one_microbit() as microbit:
       name = microbit.generic_access.read_device_name()
-      dbg = int(sys.argv[2]) if len(sys.argv) > 2 else 0
+      dbg = int(sys.argv[2]) if len(sys.argv) > 2 else 1
       if lib.ext_start(c_char_p(name[15:20].encode()), dbg) <= 0:
         print("Link: Main start failed!")
       else:
