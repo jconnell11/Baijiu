@@ -1,4 +1,4 @@
-// rng_mot.h : depth-from-motion via point tracking
+// rng_flr.h : makes pseudo-range image from non-textured floor areas
 //
 // Written by Jonathan H. Connell, jconnell@alum.mit.edu
 //
@@ -27,7 +27,7 @@
 
 // function declarations 
 
-#ifdef RNGMOT_EXPORTS
+#ifdef RNGFLR_EXPORTS
   #define DEXP __declspec(dllexport)
 #else
   #define DEXP __declspec(dllimport)
@@ -36,8 +36,8 @@
 
 // link to library stub
 
-#ifndef RNGMOT_EXPORTS
-  #pragma comment(lib, "rng_mot.lib")
+#ifndef RNGFLR_EXPORTS
+  #pragma comment(lib, "rng_flr.lib")
 #endif
 
 
@@ -47,31 +47,43 @@
 
 //= Configure system for a certain input image size and clear all point data.
 
-extern "C" DEXP void rng_init (int w =640, int h =480);
+extern "C" DEXP void rng_init (double flen, int w =640, int h =480);
 
 
 //= Start building depth map from color image and best-guess odometry.
-// location of base in global map is (xbase ybase) and traveling along head (degs)
-// camera is at (x y z) wrt base and rotated by (p t r) relative to forward and level
-// assumes odometry and relative pose are contemporaneous with image acquisition
+// pixel data is BGR triples scanned left-to-right and bottom-up
+// camera is up ht inches from floor, and tipped tilt degrees relative to level
 // returns 1 if new image accepted, 0 if not (typically because busy)
 
-extern "C" DEXP int rng_est (const unsigned char *rgb, double xbase, double ybase, double head, 
-                             double x, double y, double z, double p, double t, double r);
+extern "C" DEXP int rng_est (const unsigned char *rgb, double ht, double tilt);
 
 
 //= Tell if range image ready (1), still processing (0), or never started (-1).
+// can optionally wait for ms milliseconds if still processing
 
-extern "C" DEXP int rng_rdy ();
+extern "C" DEXP int rng_rdy (int ms =0);
 
 
-//= Binds cached input image and aligned depth map to supplied pointers.
-// also binds improved estimate of base odometry at time of image acquisition
-// location of base in global map is (mx my), total travel of tr, total turn of wd
-// rng is 16 bit depth values from camera in 0.02" steps orthogonal to image plane
-// output images remain valid until next rng_est() call
+//= Binds aligned depth map and cached input image to supplied pointers.
+// rng is 16 bit depth values from camera in 0.25mm steps orthogonal to image plane
+// resets state to -1, output image remains valid until next rng_est() call
 // returns 1 if images and odometry bound, 0 if not ready yet (busy)
 
-extern "C" DEXP int rng_d16 (const unsigned char **col, const unsigned char **rng, 
-                             double& mx, double& my, double& tr, double& wd);
+extern "C" DEXP int rng_d16 (const unsigned char **rng, const unsigned char **col =NULL);
+
+
+///////////////////////////////////////////////////////////////////////////
+//                          Debugging Images                             //
+///////////////////////////////////////////////////////////////////////////
+
+//= Show floor area as green in supplied color image.
+// image buffer filled BGR bottom-up, assumes large enough = iw * ih * 3
+
+extern "C" DEXP void rng_gnd (unsigned char *buf);
+
+
+//= Show range fading with distance in supplied color image.
+// image buffer filled BGR bottom-up, assumes large enough = iw * ih * 3
+
+extern "C" DEXP void rng_nite (unsigned char *buf);
 

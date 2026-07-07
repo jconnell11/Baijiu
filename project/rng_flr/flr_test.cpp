@@ -1,4 +1,4 @@
-// vid_test.cpp : speed test of spio_win.dll video capture and display
+// flr_test.cpp : test of pseudo-range inference from color images
 //
 // Written by Jonathan H. Connell, jconnell@alum.mit.edu
 //
@@ -22,80 +22,98 @@
 
 #pragma comment(lib, "winmm.lib")      // for timeGetTime
 
-#include <windows.h>                   // needed for Sleep
+#include <windows.h>                   // needed for timeGetTime
 #include <stdio.h>
 #include <conio.h>
 
-#include "vid_ocv.h"
+#include "vid_ocv.h"                   
+#include "rng_flr.h"
 
-
-//= Speed test of spio_win.dll video capture and display.
+//= Test of pseudo-range inference from color images.
 // hardwired for ESP32Cam wifi streaming at VGA 
-// about 24 fps @ 6', 18 fps @ 13' (no antenna -> EdiMax)
+// shows floor area image and grayscale version of depth
 // takes final IP number as argument, e.g. 240 or 155
+// NOTE: needs ocv_vid, opencv_world4100, and opencv_videoio_ffmpeg4100_64 DLLs!
 
 int main (int argc, char *argv[])
 {
   char ipnam[40] = "http://192.168.0.200:81/stream";
-  const unsigned char *buf;
+  const unsigned char *vbuf;
+  unsigned char *gbuf = NULL, *nbuf = NULL;
   unsigned long start;
-  double secs;
-  int rc, cnt = 0, warp = 1, show = 1;
+  double secs, ht = 5.5, tilt = 4.2;
+  int rc, cnt = 0;
 
-//show = 0;
-//warp = 0;
+  // announce default camera pose
+  printf("Assuming power-on camera pose:\n");
+  printf("  ht = %3.1f\", tilt = %3.1f degs\n", ht, tilt);
 
-  // build camera URL using argument to exec
+  // build camera URL using argument to exec then try to connect
   if (argc > 1)
     sprintf_s(ipnam, "http://192.168.0.%s:81/stream", argv[1]);
-
-  // connect to camera
-  printf("Opening %s ...\n", ipnam);
-  if ((rc = ocv_open(ipnam, 1)) <= 0)
+  printf("Opening %s ...\n", ipnam);                                 
+  if ((rc = ocv_open(ipnam, 1)) <= 0)            // has OpenCV DLLs?
   {
     printf("Failed to open video source -> %d\n", rc);
     return 0;
   }
 
-  // optional geometric correct and display
-  if (warp > 0)        
-    ocv_warp(0.1405, -0.1331, 0.0249, 219, 1, 313.1, 242.3);     
-  if (show > 0)
-    ocv_win(0, "Camera View", 1100, 0);     
+  // set standard geometric correction and create two display windows
+  ocv_warp(0.1405, -0.1331, 0.0249, 219, 1, 313.1, 242.3);     
+  rng_init(219, 640, 480);          
+  ocv_win(0, "Floor", 0, 0);     
+  ocv_win(1, "Depth", 650, 0);     
+
+  // create buffers on heap for debugging images
+  gbuf = new unsigned char [640 * 480 * 3];
+  nbuf = new unsigned char [640 * 480 * 3];
 
   // continuously framegrab
   printf("Streaming video (hit any key to exit) ...\n");
   start = timeGetTime();
   while (!_kbhit())
   {
-    if (ocv_get(&buf, 1) <= 0)         // blocks
+    // get next video frame (blocks)
+    if (ocv_get(&vbuf, 1) <= 0)      
     {
       printf("Video connection lost!\n");
       break;
     }
-    if (show > 0)
-    {
-      ocv_queue(0, buf, 640, 480);
-      ocv_show(); 
-    }
+
+    // perform depth inference and wait for completion
+    rng_est(vbuf, ht, tilt);
+    if (rng_rdy(200) <= 0)
+      continue;
+    rng_d16(NULL, NULL);               // to reset flag
+    rng_gnd(gbuf);
+    rng_nite(nbuf);
+
+    // show newest images
+    ocv_queue(0, gbuf, 640, 480);
+    ocv_queue(1, nbuf, 640, 480);    
+    ocv_show(); 
     cnt++;
     printf("\r  %d ", cnt);
     fflush(stdout);
   }
 
-  // report speed and cleanup
+  // report speed 
   secs = 0.001 * (timeGetTime() - start);
   if (cnt > 0)
     printf("frames in %3.1f secs = %3.1f fps\n", secs, cnt / secs);
   else
     printf("  0 frames in 0.0 secs = 0.0 fps\n");
+
+  // clean up
   ocv_close();
+  delete [] nbuf;
+  delete [] gbuf;
 
   // keep terminal window visible
   while (_kbhit())
-    _getch();
+    rc = _getch();
   printf("Hit any key to exit ...\n");
-  _getch();
+  rc = _getch();
   return 1;
 }
 

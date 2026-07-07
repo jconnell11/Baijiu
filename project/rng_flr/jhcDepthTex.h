@@ -1,4 +1,4 @@
-// jhcVisOdom.h : builds synthetic depth map from tracking 2D points
+// jhcDepthTex.h : builds approx depth map from color image in background
 //
 // Written by Jonathan H. Connell, jconnell@alum.mit.edu
 //
@@ -24,35 +24,27 @@
 
 #include "jhc_pthread.h"
 
+#include "Environ/jhcPlainFloor.h"
+
 
 //= Builds synthetic depth map from tracking 2D points.
 // also generates most likely camera pose as a byproduct 
 
-class jhcVisOdom
+class jhcDepthTex : private jhcPlainFloor
 {
 // PRIVATE MEMBER VARIABLES
 private:
-  // useful constants
-  double D2R, R2D;
-
-  // images and dimensions
-  unsigned char *col, *rng;
-  int iw, ih;
-
-  // submitted camera offset and full pose
-  double rx, ry, rp, sx, sy, sz, sp, st, sr; 
-
-  // full camera pose: estimated and computed
-  double ex, ey, ez, ep, et, er;
-  double cx, cy, cz, cp, ct, cr;
-
-  // computed global odometry
-  double mapx, mapy, head, trav, wind;
+  // input and output image plus partial pose
+  jhcImg col, rng;
+  double cz, ct;
 
   // background thread
   pthread_t bg;
-  int done, first;
+  int done;
 
+  // debugging image wrappers
+  jhcImg gwrap, nwrap;
+  
 
 // PUBLIC MEMBER VARIABLES
 public:
@@ -61,26 +53,27 @@ public:
 // PUBLIC MEMBER FUNCTIONS
 public:
   // creation and initialization
-  ~jhcVisOdom ();
-  jhcVisOdom ();
+  ~jhcDepthTex ();
+  jhcDepthTex ();
  
   // main functions
-  void Init (int w, int h);
-  int Estimate (const unsigned char *rgb, double mx, double my, double hd, 
-                double x, double y, double z, double p, double t, double r);
-  int Ready () const;
-  int Depth (const unsigned char **col, const unsigned char **rng, 
-             double& mx, double& my, double& tr, double& wd);
+  void Init (double flen, int iw =640, int ih =480);
+  int Estimate (const unsigned char *rgb, double ht, double tilt);
+  int Ready (int ms =0) const;
+  int Depth (const unsigned char **d16, const unsigned char **rgb =NULL);
+
+  // debugging images
+  void Ground (unsigned char *buf);
+  void Night (unsigned char *buf);
 
 
 // PRIVATE MEMBER FUNCTIONS
 private:
-  // range map construction
+  // main functions
   void analyze ();
-  void update_odom ();
 
   // background thread
   static pthread_ret build_d16 (void *inst)
-    {jhcVisOdom *me = (jhcVisOdom *) inst; me->analyze(); return 0;}
+    {jhcDepthTex *me = (jhcDepthTex *) inst; me->analyze(); return 0;}
              
 };

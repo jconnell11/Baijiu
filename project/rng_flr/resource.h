@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by rng_mot.rc
+// Used by rng_flr.rc
 
 // Next default values for new objects
 // 

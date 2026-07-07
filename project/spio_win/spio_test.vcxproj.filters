@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Header Files\shared">
-      <UniqueIdentifier>{63eebfc2-7e58-44a7-8213-5befe5f72cf9}</UniqueIdentifier>
+      <UniqueIdentifier>{67d14b86-8b54-4fb6-96e4-2507ba70c0ec}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

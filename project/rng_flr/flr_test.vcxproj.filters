@@ -14,34 +14,20 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Header Files\shared">
-      <UniqueIdentifier>{1a8579aa-bb47-498c-9f1f-e81f78841a6d}</UniqueIdentifier>
+      <UniqueIdentifier>{f78e735a-bff4-4ce6-a1df-24f9186397f1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="rng_mot.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="jhcVisOdom.cpp">
+    <ClCompile Include="flr_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\shared\rng_mot.h">
+    <ClInclude Include="..\shared\rng_flr.h">
       <Filter>Header Files\shared</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="jhcVisOdom.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\shared\jhc_pthread.h">
+    <ClInclude Include="..\shared\vid_ocv.h">
       <Filter>Header Files\shared</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="rng_mot.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
   </ItemGroup>
 </Project>

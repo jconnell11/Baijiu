@@ -19,23 +19,63 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="jhcVisOdom.cpp" />
-    <ClCompile Include="rng_mot.cpp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClInclude Include="..\..\..\video\common\Data\jhcArr.h" />
+    <ClInclude Include="..\..\..\video\common\Data\jhcBBox.h" />
+    <ClInclude Include="..\..\..\video\common\Data\jhcImg.h" />
+    <ClInclude Include="..\..\..\video\common\Data\jhcRoi.h" />
+    <ClInclude Include="..\..\..\video\common\Interface\jhcMessage.h" />
+    <ClInclude Include="..\..\..\video\common\Interface\jms_x.h" />
+    <ClInclude Include="..\..\..\video\common\Interface\jprintf.h" />
+    <ClInclude Include="..\..\..\video\common\Interface\jtimer.h" />
+    <ClInclude Include="..\..\..\video\common\jhcGlobal.h" />
+    <ClInclude Include="..\..\..\video\common\jhc_conio.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcALU.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcArea.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcColor.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcDist.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcDraw.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcEdge.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcGray.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcGroup.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcLUT.h" />
+    <ClInclude Include="..\..\..\video\common\Processing\jhcThresh.h" />
+    <ClInclude Include="..\..\common\Environ\jhcPlainFloor.h" />
     <ClInclude Include="..\shared\jhc_pthread.h" />
-    <ClInclude Include="..\shared\rng_mot.h" />
-    <ClInclude Include="jhcVisOdom.h" />
+    <ClInclude Include="..\shared\rng_flr.h" />
+    <ClInclude Include="jhcDepthTex.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="rng_mot.rc" />
+    <ClCompile Include="..\..\..\video\common\Data\jhcArr.cpp" />
+    <ClCompile Include="..\..\..\video\common\Data\jhcBBox.cpp" />
+    <ClCompile Include="..\..\..\video\common\Data\jhcImg.cpp" />
+    <ClCompile Include="..\..\..\video\common\Data\jhcRoi.cpp" />
+    <ClCompile Include="..\..\..\video\common\Interface\jhcMessage.cpp" />
+    <ClCompile Include="..\..\..\video\common\Interface\jms_x.cpp" />
+    <ClCompile Include="..\..\..\video\common\Interface\jprintf.cpp" />
+    <ClCompile Include="..\..\..\video\common\Interface\jtimer.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcALU.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcArea.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcColor.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcDist.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcDraw.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcEdge.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcGray.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcGroup.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcLUT.cpp" />
+    <ClCompile Include="..\..\..\video\common\Processing\jhcThresh.cpp" />
+    <ClCompile Include="..\..\common\Environ\jhcPlainFloor.cpp" />
+    <ClCompile Include="jhcDepthTex.cpp" />
+    <ClCompile Include="rng_flr.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="rng_flr.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{0c6decf2-b0a4-47d1-8cba-0cf01628a89b}</ProjectGuid>
-    <RootNamespace>dfmpts</RootNamespace>
+    <ProjectGuid>{8030c298-4bb5-4e18-b549-e9df9731ad57}</ProjectGuid>
+    <RootNamespace>rngflr</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -86,11 +126,15 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>.\</OutDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>.\</OutDir>
+    <TargetName>$(ProjectName)_d</TargetName>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;DFMPTS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;RNGFLR_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -107,7 +151,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;DFMPTS_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;RNGFLR_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -122,11 +166,11 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;RNGMOT_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;RNGFLR_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\shared;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\shared;..\..\..\robot\common;..\..\..\video\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -140,11 +184,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;RNGMOT_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;RNGFLR_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\shared;C:\Program Files (x86)\Visual Leak Detector\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\shared;..\..\..\robot\common;..\..\..\video\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
