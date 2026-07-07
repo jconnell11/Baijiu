@@ -35,7 +35,8 @@ Finally, click the circled right-arrow button near the top ("Upload"). The "Outp
 
 Entering this into your browser will bring up a page with a bunch of controls, none of which need to be adjusted. However, you do need to record the camera IP in the __calibration file__ [tagig_calib.cfg](../project/config/tagig_calib.cfg) (or whatever the ID for your micro:bit board is). 
 
-Be aware that, unless you explicitly assign it as static in the router, the camera address can change! If you __cannot connect__ to the camera, either re-plug the USB cable to get the new DHCP address, or check the local router (usually 192.168.0.1 or 192.168.1.1) for a device mentioning "ESP". Record the new address in the calibration file. 
+It is generally best to assign a __static IP__ (e.g. 200) to the camera in your router, otherwise
+its address can change! If you cannot connect to the camera anymore, either re-plug the USB cable to get the new DHCP address, or check the local router (usually 192.168.0.1 or 192.168.1.1) for a device mentioning "ESP". Record the new address in the calibration file. 
 
 ### Power Cable
 
