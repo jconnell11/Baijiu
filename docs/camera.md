@@ -23,6 +23,7 @@ Edit the __CameraWebServer.ino__ file by doing the following:
 
     near the top: fill in ssid and password for your local network
     search (^F) for QVGA -> change it to read FRAMESIZE_VGA
+    before WiFi.begin(ssid, password) add: WiFi.setHostname("Waldo"); 
 
 Edit the __board_config.h__ file by selecting the correct camera model:
 
@@ -40,7 +41,7 @@ its address can change! If you cannot connect to the camera anymore, either re-p
 
 ### Power Cable
 
-Now comes the hardest part: modifying the cable to the camera. Although the Qtruck base does provide 5 volts, this is mostly for the arm servos. Any time the robot grabs something, the hand servo will stall out and wreck the 5V supply for about 3 seconds. Therefore, the tiny Pololu boost converter board needs to be wired into the power connection to the camera, as shown below.
+Now comes the hardest part: modifying the cable to the camera. Although the Qtruck base does provide 5 volts, this is mostly for the arm servos. Any time the robot grabs something, the hand servo will stall out and wreck the 5V supply for about 3 seconds! Therefore, the tiny Pololu boost converter board needs to be wired into the power connection to the camera, as shown below.
 
 ![power cable](cable3_marked.jpg)
 

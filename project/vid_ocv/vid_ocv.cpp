@@ -20,13 +20,28 @@
 // 
 ///////////////////////////////////////////////////////////////////////////
 
-#pragma comment(lib, "opencv_world4100.lib") 
+#ifndef __linux__
+  #include <windows.h>
+  #include <stdio.h>
+  #define _USE_MATH_DEFINES
+  #include <math.h>
+  #pragma comment(lib, "opencv_world4100.lib") 
+#else
+  #include <time.h>
+  #include "jhc_str_s.h"
 
-#include <windows.h>
-
-#include "opencv2/opencv.hpp"                 
+  static void Sleep (int ms)
+  {
+    timespec ts;
+    ts.tv_sec = ms / 1000;
+    ts.tv_nsec = 1000000 * (ms % 1000);
+    nanosleep(&ts, NULL); 
+  }
+#endif
 
 #include "jhc_pthread.h"
+
+#include "opencv2/opencv.hpp"                 
 
 #include "vid_ocv.h"
 
@@ -78,21 +93,25 @@ static int id[6], but[6], mx[6], my[6];
 //                             Initialization                            //
 ///////////////////////////////////////////////////////////////////////////
 
-//= Clean up on exit.
+#ifndef __linux__
 
-BOOL APIENTRY DllMain (HANDLE hModule,
-                       DWORD ul_reason_for_call, 
-                       LPVOID lpReserved)
-{
-  if (ul_reason_for_call == DLL_PROCESS_ATTACH)
-    pthread_mutex_init(&data, NULL);
-  else if (ul_reason_for_call == DLL_PROCESS_DETACH)
+  //= Clean up on exit.
+
+  BOOL APIENTRY DllMain (HANDLE hModule,
+                         DWORD ul_reason_for_call, 
+                         LPVOID lpReserved)
   {
-    ocv_close();
-    pthread_mutex_destroy(&data);
+    if (ul_reason_for_call == DLL_PROCESS_ATTACH)
+      pthread_mutex_init(&data, NULL);
+    else if (ul_reason_for_call == DLL_PROCESS_DETACH)
+    {
+      ocv_close();
+      pthread_mutex_destroy(&data);
+    }
+    return TRUE;
   }
-  return TRUE;
-}
+
+#endif
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -262,8 +281,13 @@ extern "C" DEXP int ocv_open (const char *fname, int vflip)
 extern "C" DEXP int ocv_cam (int unit, int vflip)
 {
   ok = 0;
-  if (!vcap.open(unit, cv::CAP_V4L2))
+#ifndef __linux__
+  if (!vcap.open(unit))                    // no cv::CAP_V4L2 for Windows
     return -1;
+#else
+  if (!vcap.open(unit, cv::CAP_V4L2))      // in preference to GStreamer
+    return -1;
+#endif
   return fg_init(vflip);
 }
 
@@ -294,25 +318,27 @@ extern "C" DEXP int ocv_info (int& iw, int& ih, double& fps)
 
 
 //= Set geometric manipulations to perform on raw image.
-// sets up "base" and "mix" arrays for use by fixup()
+// de-warped version will have optical center in middle of image
 //   k1   = r^2 lens radial distortion (wrt flen)
 //   k2   = r^4 lens radial distortion (wrt flen)
 //   k3   = r^6 lens radial distortion (wrt flen)
 //   flen = focal length (both x and y, in pels)
 //   mag  = overall magnification after correction
+//   rot  = rotation of image around final center (degs)
 //   cx   = lens center x coordinate (defaults to mid-x)
 //   cy   = lens center y coordinate (defaults to mid-y)
-// de-warped version will have optical center in middle of image
-// NOTE: needs to know image size before building transform
+// needs to know image size from ocv_open() before building transform tables
+// NOTE: if no warp specified then image passes through with no correction
  
 extern "C" DEXP void ocv_warp (double k1, double k2, double k3, double flen, 
-                               double mag, double cx, double cy)
+                               double mag, double rot, double cx, double cy)
 {
   cv::Size sz = raw.size(); 
   int iw = sz.width, ih = sz.height, xlim = iw - 1, ylim = ih - 1, ln = 3 * iw;
   int x, y, ix, iy, fx, fy;
   double sc = 1.0 / mag, norm2 = 1.0 / (flen * flen), x0 = 0.5 * xlim, y0 = 0.5 * ylim;
-  double dx, dy, dy2, r2, warp, wx, wy;
+  double rads = M_PI * rot / 180.0, c = cos(rads), s = sin(rads);
+  double dx0, dy0, dx, dy, dy2, r2, warp, wx, wy;
   unsigned long *b;
   unsigned short *m;
 
@@ -338,19 +364,23 @@ extern "C" DEXP void ocv_warp (double k1, double k2, double k3, double flen,
   base = new unsigned long [4 * npel];
   mix  = new unsigned short [2 * npel];
 
-  // build transform lookup tables
+  // build transform lookup tables "base" and "mix" for fixup()
   b = base;
   m = mix;
   for (y = 0; y < ih; y++)
   {
     // get central offset adjusted for pixel aspect ratio
-    dy = sc * (y - y0);
-    dy2 = dy * dy;
+    dy0 = sc * (y - y0);
+    dy2 = dy0 * dy0;
     for (x = 0; x < iw; x++, b++, m++)
     {
       // compute radial offset from center
-      dx = sc * (x - x0);
-      r2 = norm2 * (dx * dx + dy2);
+      dx0 = sc * (x - x0);
+      r2 = norm2 * (dx0 * dx0 + dy2);
+
+      // apply rotation correction
+      dx = c * dx0 - s * dy0;
+      dy = s * dx0 + c * dy0;
 
       // determine lens warped coordinates
       warp = 1.0 + (k1 + (k2 + k3 * r2) * r2) * r2;
@@ -371,9 +401,9 @@ extern "C" DEXP void ocv_warp (double k1, double k2, double k3, double flen,
 
       // save fractional interpolation coefficients
       fx = (int)(256.0 * (wx - ix) + 0.5);
-      fx = __min(fx, 255);
+      fx = ((fx <= 255) ? fx : 255); 
       fy = (int)(256.0 * (wy - iy) + 0.5);
-      fy = __min(fy, 255);
+      fy = ((fy <= 255) ? fy : 255); 
       *m = (unsigned short)((fx << 8) | fy);
     }
   }

@@ -24,9 +24,7 @@
     <ClInclude Include="..\..\..\video\common\Data\jhcImg.h" />
     <ClInclude Include="..\..\..\video\common\Data\jhcRoi.h" />
     <ClInclude Include="..\..\..\video\common\Interface\jhcMessage.h" />
-    <ClInclude Include="..\..\..\video\common\Interface\jms_x.h" />
     <ClInclude Include="..\..\..\video\common\Interface\jprintf.h" />
-    <ClInclude Include="..\..\..\video\common\Interface\jtimer.h" />
     <ClInclude Include="..\..\..\video\common\jhcGlobal.h" />
     <ClInclude Include="..\..\..\video\common\jhc_conio.h" />
     <ClInclude Include="..\..\..\video\common\Processing\jhcALU.h" />
@@ -51,9 +49,7 @@
     <ClCompile Include="..\..\..\video\common\Data\jhcImg.cpp" />
     <ClCompile Include="..\..\..\video\common\Data\jhcRoi.cpp" />
     <ClCompile Include="..\..\..\video\common\Interface\jhcMessage.cpp" />
-    <ClCompile Include="..\..\..\video\common\Interface\jms_x.cpp" />
     <ClCompile Include="..\..\..\video\common\Interface\jprintf.cpp" />
-    <ClCompile Include="..\..\..\video\common\Interface\jtimer.cpp" />
     <ClCompile Include="..\..\..\video\common\Processing\jhcALU.cpp" />
     <ClCompile Include="..\..\..\video\common\Processing\jhcArea.cpp" />
     <ClCompile Include="..\..\..\video\common\Processing\jhcColor.cpp" />
@@ -127,7 +123,7 @@
     <OutDir>.\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>.\</OutDir>
+    <OutDir>..\DLL</OutDir>
     <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -194,6 +190,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

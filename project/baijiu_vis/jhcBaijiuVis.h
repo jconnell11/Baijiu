@@ -36,9 +36,9 @@ private:
   unsigned char *view, *map;
   int vok, got, show;
 
-// video performance
-unsigned long ms;
-int vcnt, fcnt;
+  // delayed camera pose history
+  double pose[10][6];
+  int fill;
 
   // cumulative odometry and interim adjustements
   double mapx, mapy, trav, wind, imapx, imapy, itrav, iwind;

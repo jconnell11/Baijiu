@@ -4,9 +4,9 @@ Speech is entirely optional for the [ALIA](https://github.com/jconnell11/ALIA) r
 
 ### Speaker Installation
 
-Adding an external speaker/microphone combination allows you to talk directly to the physical robot instead of to your laptop (should you desire to use speech). Do this by flipping the robot over and affixing the mini-speaker to the underside using two strips of Gorilla double-sided tape: one on the chassis and one on the battery. The speaker should be mounted with its grill upwards (button downward) and its USB charging port toward the rear of the vehicle. A __double layer__ of tape often works best since it accommodates the mild curvature on top. 
+Adding an external speaker/microphone combination allows you to talk directly to the physical robot instead of to your laptop (should you desire to use speech). Do this by flipping the robot over and affixing the mini-speaker to the underside. Apply a strip of Gorilla double-sided tape to the battery, then deposit a big blob of hot melt on the back of the chassis and press the speaker into it. The speaker should be mounted with its grill towards the top of the robot and its USB charging port toward the rear. 
 
-![speaker attachment](speaker_marked.jpg)
+![speaker attachment](speaker_marked2.jpg)
 
 ### Text to Speech
 

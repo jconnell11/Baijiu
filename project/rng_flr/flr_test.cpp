@@ -59,7 +59,7 @@ int main (int argc, char *argv[])
   }
 
   // set standard geometric correction and create two display windows
-  ocv_warp(0.1405, -0.1331, 0.0249, 219, 1, 313.1, 242.3);     
+  ocv_warp(0.14, -0.13, 0.024, 219, 1, 313, 242);  // wide lens
   rng_init(219, 640, 480);          
   ocv_win(0, "Floor", 0, 0);     
   ocv_win(1, "Depth", 650, 0);     

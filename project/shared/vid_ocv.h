@@ -28,19 +28,22 @@
 #include <stddef.h>           // for NULL
 
 
-// function declarations 
-
-#ifdef VIDOCV_EXPORTS
-  #define DEXP __declspec(dllexport)
+#ifdef __linux__
+  #define DEXP                // nothing special needed for Linux shared lib
 #else
-  #define DEXP __declspec(dllimport)
-#endif
 
+  // function declarations 
+  #ifdef VIDOCV_EXPORTS
+    #define DEXP __declspec(dllexport)
+  #else
+    #define DEXP __declspec(dllimport)
+  #endif
 
-// link to library stub
+  // link to library stub
+  #ifndef VIDOCV_EXPORTS
+    #pragma comment(lib, "vid_ocv.lib")
+  #endif
 
-#ifndef VIDOCV_EXPORTS
-  #pragma comment(lib, "vid_ocv.lib")
 #endif
 
 
@@ -78,18 +81,18 @@ extern "C" DEXP int ocv_info (int& iw, int& ih, double& fps);
 
 
 //= Set geometric manipulations to perform on raw image.
-// sets up "base" and "mix" arrays for use by fixup()
-// OpenCV distortion conversion: r2f = 1e6 * k1 / flen^2
+// de-warped version will have optical center in middle of image
 //   r2f = r^2 lens radial distortion x 10^6 (pixel coords)
 //   r4f = r^4 lens radial distortion x 10^12 (pixel coords)
-//   asp = width/length of individual pixel (if not square)
 //   mag = overall magnification after correction
+//   rot = rotation of image around final center (degs)
 //   cx  = lens center x coordinate (defaults to mid-x)
 //   cy  = lens center y coordinate (defaults to mid-y)
-// NOTE: needs to know image size before building transform
+// needs to know image size from ocv_open() before building transform tables
+// NOTE: if no warp specified then image passes through with no correction
  
-extern "C" DEXP void ocv_warp (double r2f, double r4f =0.0, double r6f =0.0, double mag =1.0, 
-                               double asp =1.0, double cx =0.0, double cy =0.0);
+extern "C" DEXP void ocv_warp (double r2f, double r4f =0.0, double r6f =0.0, double flen =553.0,
+                               double mag =1.0, double rot =1.0, double cx =0.0, double cy =0.0);
                                
 
 //= Bind filled framebuffer for next image to supplied pointer.

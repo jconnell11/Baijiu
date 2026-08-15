@@ -26,13 +26,12 @@
 
 #include "spio_win.h"
 #include "vid_ocv.h"
-#include "rng_mot.h"
+#include "rng_flr.h"
 #include "alia_vis.h"
 
 #include "jhcBaijiuVis.h"
 
-#include <timeapi.h>
-#pragma comment(lib, "winmm.lib")  
+
 ///////////////////////////////////////////////////////////////////////////
 //                      Creation and Initialization                      //
 ///////////////////////////////////////////////////////////////////////////
@@ -57,7 +56,7 @@ jhcBaijiuVis::jhcBaijiuVis ()
   got  = 0;
   show = 0;
   p0 = 6;                    // x1.25 = younger voice
-  r0 = 2;                    // x1.10 = faster talking
+  r0 = 0;                    // normal speed talking
 }
 
 
@@ -79,7 +78,7 @@ int jhcBaijiuVis::Launch (int dbg)
     printf("\x1b[1;33m  >>> No active camera found!\x1b[0m\n");
     return 0;
   }
-  ocv_warp(0.14, -0.13, 0.024, 219, 1, 313, 242);  // checkerboard
+  ocv_warp(0.14, -0.13, 0.024, 219, 1, cr0, 313, 242);       
   vok = 1;
 
   // start TTS and web speech recognition
@@ -89,17 +88,8 @@ int jhcBaijiuVis::Launch (int dbg)
     PlaySFX("toot");                             // only warn
   }
   else
-    PlaySFX("R2D2_half");                        // whistle
+    PlaySFX("R2D2_faint");                       // whistle
   Sleep(1000);
-
-/*
-//tts_say("<pitch absmiddle=\"10\"/>");
-tts_say("<pitch absmiddle=\"10\">I am Waldo the white robot</pitch>");
-Sleep(5000);
-tts_say("The speech system is working just fine");
-Sleep(5000);
-tts_say("<pitch absmiddle=\"10\"/>");
-*/
 
   // start reasoning engine (builds name list for speech reco)
   if (alia_reset(NULL, "Waldo Baijiu", "baijiu_vis", dbg) <= 0)
@@ -112,7 +102,7 @@ tts_say("<pitch absmiddle=\"10\"/>");
 
   // configure optional debugging output images
   show = 0;
-  if (dbg > 0)
+  if (dbg != 0)
   {
     show = 1;
     view = new unsigned char [3 * 640 * 480];
@@ -124,6 +114,9 @@ tts_say("<pitch absmiddle=\"10\"/>");
     ocv_win(0, "Camera View", 340, 0);        
     ocv_win(1, alia_tmap(), 1000, 0);
   }
+
+  // set up to initialize pose buffer
+  fill = -1;
 
   // reset cumulative odometry
   mapx = 0.0;
@@ -138,11 +131,7 @@ tts_say("<pitch absmiddle=\"10\"/>");
   iwind = 0.0;
 
   // reset depth-from-motion processor
-  rng_init(640, 480);
-
-vcnt = 0;
-fcnt = 0;
-ms = timeGetTime();
+  rng_init(219, 640, 480);
   return 1;
 }
 
@@ -178,12 +167,7 @@ int jhcBaijiuVis::Respond ()
 
 void jhcBaijiuVis::Cleanup ()
 {
-ms = timeGetTime() - ms;
   alia_done(0);
-
-printf("Processed %d out of %d video frames (%3.1f%%) = %3.1f fps\n", 
-       fcnt, vcnt, (100.0 * fcnt) / vcnt, fcnt / (0.001 * ms));
-
   jhcQtruck::Cleanup();
   ocv_close();
   if (vok <= 0)
@@ -382,20 +366,47 @@ void jhcBaijiuVis::body_issue ()
 ///////////////////////////////////////////////////////////////////////////
 
 //= Get current camera location and viewing direction.
+// delayed for capture + compress + transmit + receive + decompress time
 
 void jhcBaijiuVis::neck_update ()
 {
   double x, y, z, p, t, r;
+  int i, lag = 4;                      // cycles at ALIA update rate (30Hz)
 
+  // get current pose
   CamLoc(x, y, z);
   CamDir(p, t, r);
-  alia_cx = (float) x;       // color image
-  alia_cy = (float) y;
-  alia_cz = (float) z;
-  alia_cp = (float) p;
-  alia_ct = (float) t;
-  alia_cr = (float) r;
-  alia_rx = alia_cx;         // range = color
+
+  // possibly preload pose history buffer
+  if (fill < 0)
+    for (i = 0; i < 10; i++)
+    {
+      pose[i][0] = x;
+      pose[i][1] = y;
+      pose[i][2] = z;
+      pose[i][3] = p;
+      pose[i][4] = t;
+      pose[i][5] = r;
+    }
+
+  // add current pose to history
+  fill = (fill + 1) % 10;
+  pose[fill][0] = x;
+  pose[fill][1] = y;
+  pose[fill][2] = z;
+  pose[fill][3] = p;
+  pose[fill][4] = t;
+  pose[fill][5] = r;
+
+  // report delayed pose to ALIA
+  i = (fill + 10 - lag) % 10;          // modulo neg is neg!
+  alia_cx = (float) pose[i][0];        // color image
+  alia_cy = (float) pose[i][1];
+  alia_cz = (float) pose[i][2];
+  alia_cp = (float) pose[i][3];
+  alia_ct = (float) pose[i][4];
+  alia_cr = (float) pose[i][5];
+  alia_rx = alia_cx;                   // range = color
   alia_ry = alia_cy;
   alia_rz = alia_cz;
   alia_rp = alia_cp;
@@ -409,7 +420,7 @@ void jhcBaijiuVis::neck_update ()
 
 void jhcBaijiuVis::neck_issue ()
 {
-  double p0, t0, r0, p, t, ndps = 180.0, gips = 12.0;
+  double p0, t0, r0, p, t, ndps = 90.0, gips = 12.0;       
   int rbid = __max(alia_rpi, alia_rti), gbid = alia_rgi;
   int cbid = __max(alia_cpi, alia_cti);
 
@@ -452,7 +463,7 @@ void jhcBaijiuVis::arm_update ()
   // tell angular offset from home position
   alia_aj = (float) Astray();
 
-  // record current hand position and orientation
+  // record current hand position and orientation (no delay)
   HandLoc(x, y, z);
   HandDir(p, t, r);
   alia_ax = (float) x;
@@ -543,17 +554,37 @@ void jhcBaijiuVis::base_issue ()
 
 void jhcBaijiuVis::img_update ()
 {
-  // check if next frame in camera stream is available.
+  double cx, cy, cz, cp, ct, cr;
+
+  // check if new frame in camera stream is available.
   if ((got = ocv_get(&snap, 1)) < 0)
   {
     printf("\n\x1b[1;33m  >>> Video stream lost!\x1b[0m\n");
     vok = 0;
+    return;
   }
-vcnt++;
 
-  // if depth-from-motion done then rewrite main cumulative odometry
-  if (rng_d16(&alia_col, &alia_rng, mapx, mapy, trav, wind) > 0)  
+  // record best-guess odometry at time of image acquisition
+  mapx += imapx;
+  mapy += imapy;
+  trav += itrav;
+  wind += iwind;
+
+  // restart interim accumulation of offsets
+  imapx = 0.0;
+  imapy = 0.0;
+  itrav = 0.0;
+  iwind = 0.0;
+
+  // launch background range inference routine with best-guess pose
+  CamLoc(cx, cy, cz);
+  CamDir(cp, ct, cr);
+  rng_est(snap, cz, ct);
+
+  // wait for completion then rewrite main cumulative odometry
+  if (rng_rdy(200) > 0)
   {
+    rng_d16(&alia_rng, &alia_col);
     alia_cfmt = 1;           // mark both images as ready
     alia_rfmt = 1;
   }
@@ -565,29 +596,6 @@ vcnt++;
 void jhcBaijiuVis::img_issue ()
 {
   HWND term;
-  double cx, cy, cz, cp, ct, cr;
-
-  // possibly send next depth-from-motion analysis request
-  if ((got > 0) && (rng_rdy() > 0))
-  {
-    // record best-guess odometry at time of image acquisition
-    mapx += imapx;
-    mapy += imapy;
-    trav += itrav;
-    wind += iwind;
-
-    // restart interim accumulation of offsets
-    imapx = 0.0;
-    imapy = 0.0;
-    itrav = 0.0;
-    iwind = 0.0;
-
-    // launch background routine with newest image and best-guess pose
-    CamLoc(cx, cy, cz);
-    CamDir(cp, ct, cr);
-    rng_est(snap, mapx, mapy, wind, cx, cy, cz, cp, ct, cr); 
-fcnt++;
-  }
 
   // show both the color and map (or debug) images in separate windows
   if (show <= 0)

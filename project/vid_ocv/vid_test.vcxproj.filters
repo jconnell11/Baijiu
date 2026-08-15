@@ -26,5 +26,8 @@
     <ClInclude Include="..\shared\vid_ocv.h">
       <Filter>Header Files\shared</Filter>
     </ClInclude>
+    <ClInclude Include="jhc_conio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -94,7 +94,7 @@ else:
   try:
     with KaspersMicrobit.find_one_microbit() as microbit:
       name = microbit.generic_access.read_device_name()
-      dbg = int(sys.argv[2]) if len(sys.argv) > 2 else 1
+      dbg = int(sys.argv[2]) if len(sys.argv) > 2 else -1
       if lib.ext_start(c_char_p(name[15:20].encode()), dbg) <= 0:
         print("Link: Main start failed!")
       else:
@@ -125,5 +125,5 @@ if stop >= 0:
 if i > 1:
   gaps = i - 1  
   secs = last - start
-  print("Link: Exchange avg %3.1f ms = %3.1f Hz" % (1000 * secs / gaps, gaps / secs))   
-print("Link: Shutting down Bluetooth (can be slow) ...")                     
+#  print("Link: Exchange avg %3.1f ms = %3.1f Hz" % (1000 * secs / gaps, gaps / secs))   
+print("Link: Cleaning up (can be slow) ...")                     

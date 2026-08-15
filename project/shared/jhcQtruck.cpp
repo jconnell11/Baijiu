@@ -53,7 +53,7 @@ jhcQtruck::jhcQtruck ()
   // unknown robot
   *mb = '\0';
   strcpy_s(name, "Waldo");
-  strcpy_s(name, "http://192.168.5.1:81/stream");
+  strcpy_s(name, "http://192.168.0.200:81/stream");
 
   // initialize exchange
   *data = '\0';
@@ -312,7 +312,7 @@ int jhcQtruck::Respond ()
 void jhcQtruck::Cleanup ()
 {
   Stop();
-  printf("\n\x1b[1;36m--> Remember to power-down speaker when done\x1b[0m\n\n");
+  printf("\x1b[1;36m--> Remember to power-down speaker when done\x1b[0m\n\n");
 }
 
 
@@ -495,7 +495,7 @@ void jhcQtruck::ramp_arm ()
   // coordinate speeds so servos finish simultaneously
   bdev = fabs(bnow - bt);
   sdev = fabs(snow - st);
-  if (bdev > sdev)
+  if (bdev > sdev) 
     sinc *= sdev / bdev;
   else if (sdev > 0.0)
     binc *= bdev / sdev;
@@ -581,7 +581,7 @@ void jhcQtruck::encode_cmds (char *msg, int ssz)
 
 void jhcQtruck::calc_speeds ()
 {
-  double lsp, rsp, lag = 0.94;         // timing fudge factor 
+  double lsp, rsp, lag = 1.0;          // timing fudge factor (was 0.94)
 
   // convert left motor command to ips
   lsp = (fabs(lf) - moff) / kips;         
@@ -689,7 +689,7 @@ void jhcQtruck::CamDir (double& p, double& t, double& r) const
 {
   p = bnow + cp0;
   t = (snow - aim) + ct0;
-  r = cr0;
+  r = 0.0;                   // typically fixes cr0 with ocv_warp()
 }
 
 
@@ -722,12 +722,19 @@ double jhcQtruck::Astray () const
 
 void jhcQtruck::Reach (double x, double y, double z, double ips)
 {
-  double dy, err;
+  double dy, r, dz, err;
+
+  // figure out offset from servos
+  dy = y - by;                         // wrt base servo axis               
+  r = sqrt(x * x + dy * dy) - bs;      // wrt shoulder servo axis     
+  dz = z + fdn - sz;                   
 
   // aim so grasp point on line from shoulder to target
-  dy = y - by;
   bt = -R2D * atan2(x, dy);
-  st =  R2D * asin((z + fdn - sz) / sw);
+  if (r != 0.0)
+    st = R2D * asin(dz / r);
+  else
+    st = ((dz >= 0.0) ? 90.0 : -90.0);
 
   // compute angular speed based on Cartesian distance
   err = __max(fabs(bt - bnow), fabs(st - snow));
@@ -811,7 +818,7 @@ double jhcQtruck::Width () const
 
 void jhcQtruck::Drive (double ips, double dps)
 {  
-  double mv, rot, diff, lsp, rsp, over;
+  double mv, rot, diff, lsp, rsp, over, dead = 70.0;       // was 50
 
   // alter commands to catch-up if too slow
   servo_correct(mv, rot, ips, dps);
@@ -839,9 +846,9 @@ void jhcQtruck::Drive (double ips, double dps)
   }
   
   // squelch deadband (motors don't move for small cmds) then restore sign 
-  if (lf < 50.0)
+  if (lf < dead)
     lf = 0.0;
-  if (rt < 50.0)
+  if (rt < dead)
     rt = 0.0;
   if (lsp < 0.0)
     lf = -lf;

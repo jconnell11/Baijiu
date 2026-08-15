@@ -20,11 +20,23 @@
 // 
 ///////////////////////////////////////////////////////////////////////////
 
-#pragma comment(lib, "winmm.lib")      // for timeGetTime
+#ifndef __linux__
+  #include <windows.h>                 // needed for Sleep
+  #include <stdio.h>
+  #pragma comment(lib, "winmm.lib")    // for timeGetTime
+#else
+  #include <time.h>
+  #include "jhc_str_s.h"
 
-#include <windows.h>                   // needed for Sleep
-#include <stdio.h>
-#include <conio.h>
+  static unsigned long timeGetTime ()
+  {
+    timespec ts;
+    clock_gettime(CLOCK_BOOTTIME, &ts);
+    return (unsigned long)(ts.tv_sec * 1000 + ts.tv_nsec / 1000000);
+  }
+#endif
+
+#include "jhc_conio.h"
 
 #include "vid_ocv.h"
 
@@ -32,39 +44,42 @@
 //= Speed test of spio_win.dll video capture and display.
 // hardwired for ESP32Cam wifi streaming at VGA 
 // about 24 fps @ 6', 18 fps @ 13' (no antenna -> EdiMax)
-// takes final IP number as argument, e.g. 240 or 155
+// argument is camera unit number (default = Baijiu streamer)
 
 int main (int argc, char *argv[])
 {
-  char ipnam[40] = "http://192.168.0.200:81/stream";
+  char ipname[80] = "http://192.168.0.200:81/stream";
   const unsigned char *buf;
   unsigned long start;
   double secs;
-  int rc, cnt = 0, warp = 1, show = 1;
-
-//show = 0;
-//warp = 0;
-
-  // build camera URL using argument to exec
-  if (argc > 1)
-    sprintf_s(ipnam, "http://192.168.0.%s:81/stream", argv[1]);
+  int rc, unit, cnt = 0, warp = 1, show = 1;
 
   // connect to camera
-  printf("Opening %s ...\n", ipnam);
-  if ((rc = ocv_open(ipnam, 1)) <= 0)
+  if (argc > 1)
   {
-    printf("Failed to open video source -> %d\n", rc);
+    unit = atoi(argv[1]);
+    printf("Opening camera %d ...\n", unit);
+    rc = ocv_cam(unit, 1);
+  }
+  else
+  {
+    printf("Opening %s ...\n", ipname);
+    rc = ocv_open(ipname, 1);
+  }
+  if (rc <= 0)
+  {
+    printf("  Failed to open video source!\n");
     return 0;
   }
 
   // optional geometric correct and display
   if (warp > 0)        
-    ocv_warp(0.1405, -0.1331, 0.0249, 219, 1, 313.1, 242.3);     
+    ocv_warp(0.14, -0.13, 0.024, 219, 1, 1, 313, 242);    // wide lens
   if (show > 0)
     ocv_win(0, "Camera View", 1100, 0);     
 
   // continuously framegrab
-  printf("Streaming video (hit any key to exit) ...\n");
+  printf("Streaming video (hit any key to stop) ...\n");
   start = timeGetTime();
   while (!_kbhit())
   {
@@ -84,7 +99,7 @@ int main (int argc, char *argv[])
   }
 
   // report speed and cleanup
-  secs = 0.001 * (timeGetTime() - start);
+  secs = 0.001 * (double)(timeGetTime() - start);
   if (cnt > 0)
     printf("frames in %3.1f secs = %3.1f fps\n", secs, cnt / secs);
   else
@@ -96,6 +111,7 @@ int main (int argc, char *argv[])
     _getch();
   printf("Hit any key to exit ...\n");
   _getch();
+  _kbdone();                 // for Linux
   return 1;
 }
 

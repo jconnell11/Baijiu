@@ -61,7 +61,7 @@ int jhcQtDrive::Launch (int dbg)
     printf("\x1b[1;33m  >>> No active camera found!\x1b[0m\n");
   else
   {
-    ocv_warp(0.14, -0.13, 0.024, 219, 1, 313, 242);  // checkerboard
+    ocv_warp(0.14, -0.13, 0.024, 219, 1, 313, 242);  // wide lens
     ocv_win(0, "Esp32 camera", 0, 0);                // for display   
     first = 1;            
     vok = 1;

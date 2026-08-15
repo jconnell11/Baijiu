@@ -38,9 +38,6 @@
     <ClInclude Include="jhcBaijiuVis.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\shared\jhc_pthread.h">
-      <Filter>Header Files\shared</Filter>
-    </ClInclude>
     <ClInclude Include="..\shared\jhcQtruck.h">
       <Filter>Header Files\shared</Filter>
     </ClInclude>
@@ -54,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\shared\rng_mot.h">
+      <Filter>Header Files\shared</Filter>
+    </ClInclude>
+    <ClInclude Include="..\shared\jhc_pthread.h">
       <Filter>Header Files\shared</Filter>
     </ClInclude>
   </ItemGroup>
