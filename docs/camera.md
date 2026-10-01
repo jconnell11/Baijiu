@@ -30,7 +30,7 @@ Edit the __board_config.h__ file by selecting the correct camera model:
     comment out: CAMERA_MODEL_ESP_EYE
     un-comment: CAMERA_MODEL_AI_THINKER
 
-Finally, click the circled right-arrow button near the top ("Upload"). The "Output" panel will show the programming process. When this completes, open the "Serial Monitor" panel (click upper right circle) and select 115200 baud (far right bottom). As the last step, hit the RST button (left) on the rear camera board to reboot. You sould get a message with the camera's __IP address__, something like:
+Finally, click the circled right-arrow button near the top ("Upload"). The "Output" panel will show the programming process. When this completes, open the "Serial Monitor" panel (click upper right circle) and select 115200 baud (far right bottom). As the last step, hit the RST button (left) on the rear camera board to reboot. You should get a message with the camera's __IP address__, something like:
 
     Camera Ready! Use 'http://192.168.0.240' to connect
 
@@ -45,7 +45,7 @@ Now comes the hardest part: modifying the cable to the camera. Although the Qtru
 
 ![power cable](cable3_marked.jpg)
 
-Start by cutting the micro-USB cable to a lengh of 4 inches. Cut another 4" length out of the remainder (or use some other 2 conductor cable). Strip and tin all the wire ends. Insert the naked cable through the component side of the converter board and solder the red wire to "VIN" and the black wire to "GND". Now take the micro-USB connector cable and, on the back of the converter board, solder its red wire to "VOUT" and its black wire to "GND". Afterwards, slide a length of heatshrink tubing over the whole board assembly to insulate it (or just wrap it in electrical tape). Finally, locate port "1" on the right edge of the QTruck circuitboard (near the LED). Flip the board over and solder the exposed ends of the naked cable to the underside: the red wire goes to "5V" and the black wire goes to "GND".
+Start by cutting the micro-USB cable to a length of 4 inches. Cut another 4" length out of the remainder (or use some other 2 conductor cable). Strip and tin all the wire ends. Insert the naked cable through the component side of the converter board and solder the red wire to "VIN" and the black wire to "GND". Now take the micro-USB connector cable and, on the back of the converter board, solder its red wire to "VOUT" and its black wire to "GND". Afterwards, slide a length of heatshrink tubing over the whole board assembly to insulate it (or just wrap it in electrical tape). Finally, locate port "1" on the right edge of the QTruck circuitboard (near the LED). Flip the board over and solder the exposed ends of the naked cable to the underside: the red wire goes to "5V" and the black wire goes to "GND".
 
 ### Physical Mounting
 
