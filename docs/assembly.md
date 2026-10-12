@@ -6,11 +6,11 @@ This will likely take several hours, largely devoted to assembling the physical 
 
 Start by assembling the Qtruck robot, following the instructions for the default "transfer" model. To help the vision system with white floors, use a black Sharpie to __outline__ the heart-shaped plate holding the gripper servo. Also, skip the black __spiral wrap__ around the servo wires since this can block the camera view. To further clear the view, route the gripper servo wire across the back of the hand then up from underneath the wrist.
 
-<center><img src="gripper_marked2.jpg"></center>
+![Gripper details](gripper_marked2.jpg)
 
 As a general rule you should not grab or lift the robot by its arm, as tempting as this might be. Over time this stresses the bearing of the rotation servo and the arm gets __wobbly__. I had to replace the servo because of this! Instead, grab the robot by the front of the circuitboard, as shown below.
 
-<center><img src="lift_points.jpg"></center>
+![Where to lift](lift_points.jpg)
 
 ### Software Environment
 
