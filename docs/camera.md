@@ -6,7 +6,7 @@ Since the video framerate depends on wifi signal strength (due to tcp protocol),
 
 ### Flashing Firmware
 
-The ESP32-Cam module typically comes configured as a wifi access point (AP), which means the camera generates its own network (SSID). While this can be convenient for moving the robot between environments, it generally means having a second wifi [receiver](https://www.amazon.com/dp/B07P5PRK7J). To avoid this, configure the camera module for station mode (STA) by installing new firmware. Start by downloading and installing the [__Ardunio IDE__](https://www.arduino.cc/en/software/), then run the program and make sure the ESP processor package is installed:
+The ESP32-Cam module typically comes configured as a wifi access point (AP), which means the camera generates its own network (SSID). While this can be convenient for moving the robot between environments, it generally means having a second wifi [receiver](https://www.amazon.com/dp/B07P5PRK7J). To avoid this, configure the camera module for station mode (STA) by installing new firmware. Start by downloading and installing the [__Arduino IDE__](https://www.arduino.cc/en/software/), then run the program and make sure the ESP processor package is installed:
 
     File -> Preferences -> Settings tab -> Additional Board Manager 
     https://www.arduino.com/package_esp32_index.json
@@ -19,25 +19,37 @@ Now you need to edit the source files a little. Load the base project by selecti
 
     File -> Examples -> ESP32 -> Camera -> CameraWebServer
 
-Edit the __CameraWebServer.ino__ file by doing the following:
+Edit the __CameraWebServer.ino__ file by filling in the ssid and password for your local network and adding some extra definitions:
 
-    near the top: fill in ssid and password for your local network
+    const char *ssid = "my_home_network";
+    const char *password = "my_wifi_password";
+    IPAddress local_IP(192, 168, 0, 50);
+    IPAddress gateway(192, 168, 0, 1);
+    IPAddress subnet(255, 255, 255, 0);
+    IPAddress primaryDNS(8, 8, 8, 8);   
+    IPAddress secondaryDNS(8, 8, 4, 4); 
+
+Then finish setting up for static IP by inserting some lines before "WiFi.begin":
+
+    WiFi.setHostname("Waldo camera");
+    WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)
+    WiFi.begin(ssid, password);
+    WiFi.setSleep(false);
+
+Lastly, configure the camera for 640x480 pixel default resolution:
+
     search (^F) for QVGA -> change it to read FRAMESIZE_VGA
-    before WiFi.begin(ssid, password) add: WiFi.setHostname("Waldo"); 
 
-Edit the __board_config.h__ file by selecting the correct camera model:
+You also need to edit the __board_config.h__ file by selecting the correct camera model:
 
     comment out: CAMERA_MODEL_ESP_EYE
     un-comment: CAMERA_MODEL_AI_THINKER
 
-Finally, click the circled right-arrow button near the top ("Upload"). The "Output" panel will show the programming process. When this completes, open the "Serial Monitor" panel (click upper right circle) and select 115200 baud (far right bottom). As the last step, hit the RST button (left) on the rear camera board to reboot. You should get a message with the camera's __IP address__, something like:
+Finally, click the circled right-arrow button near the top ("Upload"). The "Output" panel will show the programming process. When this completes, open the "Serial Monitor" panel (click upper right circle) and select 115200 baud (far right bottom). As the last step, hit the RST button (left) on the rear camera board to reboot. You should get a message with the camera's IP address:
 
-    Camera Ready! Use 'http://192.168.0.240' to connect
+    Camera Ready! Use 'http://192.168.0.50' to connect
 
-Entering this into your browser will bring up a page with a bunch of controls, none of which need to be adjusted. However, you do need to record the camera IP in the __calibration file__ [tagig_calib.cfg](../project/config/tagig_calib.cfg) (or whatever the ID for your micro:bit board is). 
-
-It is generally best to assign a __static IP__ (e.g. 200) to the camera in your router, otherwise
-its address can change! If you cannot connect to the camera anymore, either re-plug the USB cable to get the new DHCP address, or check the local router (usually 192.168.0.1 or 192.168.1.1) for a device mentioning "ESP". Record the new address in the calibration file. 
+Entering this into your browser will bring up a page with a bunch of controls, none of which need to be adjusted. However, you do need to record the camera IP in the __calibration file__ [tagig_calib.cfg](../project/config/tagig_calib.cfg) (or whatever the ID for your micro:bit board is). Note that you can change the IP address used by the camera by altering the "IPAddress local_IP" line above. 
 
 ### Power Cable
 
@@ -69,4 +81,4 @@ This will automatically rewrite the configuration file with the camera offsets d
 
 ---
 
-June 2026 - Jonathan Connell - jconnell@alum.mit.edu
+October 2026 - Jonathan Connell - jconnell@alum.mit.edu

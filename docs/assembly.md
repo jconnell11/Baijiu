@@ -4,11 +4,13 @@ This will likely take several hours, largely devoted to assembling the physical 
 
 ### Hiwonder Qtruck
 
-Start by assembling the Qtruck robot, following the instructions for the default "transfer" model. For long-term stability, add a __lockwasher__ to the central screw of the arm swivel servo. 
+Start by assembling the Qtruck robot, following the instructions for the default "transfer" model. To help the vision system with white floors, use a black Sharpie to __outline__ the heart-shaped plate holding the gripper servo. Also, skip the black __spiral wrap__ around the servo wires since this can block the camera view. To further clear the view, route the gripper servo wire across the back of the hand then up from underneath the wrist.
 
-![gripper detail](gripper_marked.jpg)
+<center><img src="gripper_marked2.jpg"></center>
 
-To help the vision system with white floors, use a black Sharpie to __outline__ the heart-shaped plate holding the gripper servo. Also, skip the black __spiral wrap__ around the servo wires since this can block the camera view.
+As a general rule you should not grab or lift the robot by its arm, as tempting as this might be. Over time this stresses the bearing of the rotation servo and the arm gets __wobbly__. I had to replace the servo because of this! Instead, grab the robot by the front of the circuitboard, as shown below.
+
+<center><img src="lift_points.jpg"></center>
 
 ### Software Environment
 
@@ -26,10 +28,10 @@ You can test out the basic Bluetooth functionality by invoking the command above
 
 ### Configuration File
 
-The main programs will work somewhat better if the robot has a proper configuration file. Otherwise you may notice the complaint: "Could not read file: config/xxxxx_calib.cfg !" Each Microbit controller has a unique 5 character ID which is reflected in the xxxxx. Once you know the ID of your board (e.g. from running pc_drive, above), rename the file [robot_calib.cfg](../project/config/robot_calib.cfg) to match (e.g. "tagig_calib.cfg"). The first line inside this file is the __robot's name__. You can change it to whatever you want. The second line is the streaming camera's URL (see [Camera Installation](camera.md)). The third line has the zero degree offsets for the 3 arm servos. The fourth line lists the pan, tilt, and roll offsets for the camera (also set later). 
+The main programs will work somewhat better if the robot has a proper configuration file. Otherwise you may notice the complaint: "Could not read file: config/xxxxx_calib.cfg !" Each Microbit controller has a unique 5 character ID which is reflected in the xxxxx. Once you know the ID of your board (e.g. from running pc_drive, above), rename the file [robot_calib.cfg](../project/config/robot_calib.cfg) to match (e.g. "tagig_calib.cfg"). The first line inside this file is the __robot's name__. You can change it to whatever you want. The second line is the streaming camera's URL (see [Camera Installation](camera.md)). The third line has the zero degree offsets for the 3 arm servos (see below). The fourth line lists the pan, tilt, and roll offsets for the camera (set later). 
 
-To get proper values for the __servo offsets__, start by double clicking on the [view.bat](../project/view.bat) file. Using the PgUp and PgDn keys (while holding down "Alt" for finer positioning) adjust the spacing between the fingers until they just touch. Next, use the up and down arrow keys (with Alt) to move the grasp point between the fingertips exactly 43 mm off the floor. Finally, use the left and right arrow keys (with Alt) to align the grasp point with the robot's direction of travel. Once these steps have been accomplished, add the three numbers in the status line "... servo[ -2 0 12] ..." to the values in the second line of the configuration file.
+To get proper values for the __servo offsets__ on the third line, start by double clicking on the [view.bat](../project/view.bat) file. Using the PgUp and PgDn keys (while holding down "Alt" for finer positioning) adjust the spacing between the fingers until they just touch. Next, use the up and down arrow keys (with Alt) to move the grasp point between the fingertips exactly 43 mm off the floor. Finally, use the left and right arrow keys (with Alt) to align the grasp point with the robot's direction of travel. Once these steps have been accomplished, add the three numbers in the status line "... servo[ -2 0 12] ..." to the values in the second line of the configuration file.
 
 ---
 
-June 2026 - Jonathan Connell - jconnell@alum.mit.edu
+October 2026 - Jonathan Connell - jconnell@alum.mit.edu
